@@ -91,7 +91,6 @@ fun CheckInScreen(innerPadding: PaddingValues) {
             if (results.isEmpty()) {
                 NexusEmptyStateCard(
                     title = "暂无签到记录",
-                    description = "后续会展示每个账号的签到结果与奖励信息。",
                     icon = Icons.Outlined.CalendarMonth,
                     modifier = Modifier.fillMaxWidth(),
                 )

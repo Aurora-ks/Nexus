@@ -213,7 +213,7 @@ fun NexusStatusChip(
 @Composable
 fun NexusEmptyStateCard(
     title: String,
-    description: String,
+    description: String? = null,
     icon: ImageVector,
     modifier: Modifier = Modifier,
 ) {
@@ -245,12 +245,14 @@ fun NexusEmptyStateCard(
                 style = MaterialTheme.typography.titleLarge,
                 color = TextPrimary,
             )
-            Text(
-                text = description,
-                style = MaterialTheme.typography.bodyLarge,
-                color = TextMuted,
-                textAlign = TextAlign.Center,
-            )
+            if (!description.isNullOrBlank()) {
+                Text(
+                    text = description,
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = TextMuted,
+                    textAlign = TextAlign.Center,
+                )
+            }
         }
     }
 }
@@ -261,7 +263,7 @@ fun NexusLabeledTextField(
     value: String,
     onValueChange: (String) -> Unit,
     modifier: Modifier = Modifier,
-    placeholder: String,
+    placeholder: String? = null,
 ) {
     Column(
         modifier = modifier,
@@ -277,12 +279,14 @@ fun NexusLabeledTextField(
             onValueChange = onValueChange,
             modifier = Modifier.fillMaxWidth(),
             textStyle = MaterialTheme.typography.bodyLarge.copy(color = TextPrimary),
-            placeholder = {
-                Text(
-                    text = placeholder,
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = TextMuted,
-                )
+            placeholder = placeholder?.takeIf { it.isNotBlank() }?.let { placeholderText ->
+                {
+                    Text(
+                        text = placeholderText,
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = TextMuted,
+                    )
+                }
             },
             singleLine = true,
             shape = RoundedCornerShape(8.dp),
