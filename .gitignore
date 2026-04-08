@@ -1,0 +1,19 @@
+# 构建产物
+/build/
+app/build/
+
+# Gradle 缓存
+.gradle/
+
+# Android 本地配置
+local.properties
+
+# macOS 系统文件
+.DS_Store
+**/.DS_Store
+
+# IDEA
+.idea/
+
+# Kotlin 会话缓存
+.kotlin/

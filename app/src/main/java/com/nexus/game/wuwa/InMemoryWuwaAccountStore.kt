@@ -1,0 +1,20 @@
+package com.nexus.game.wuwa
+
+import com.nexus.game.wuwa.model.WuwaAccount
+
+class InMemoryWuwaAccountStore : WuwaAccountStore {
+    private val accounts = linkedMapOf<Long, WuwaAccount>()
+    private var nextId = 1L
+
+    override suspend fun save(account: WuwaAccount): WuwaAccount {
+        val saved = if (account.id == 0L) {
+            account.copy(id = nextId++)
+        } else {
+            account
+        }
+        accounts[saved.id] = saved
+        return saved
+    }
+
+    override suspend fun getAccounts(): List<WuwaAccount> = accounts.values.toList()
+}
