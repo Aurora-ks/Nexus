@@ -41,6 +41,8 @@ import com.nexus.ui.theme.AccentOnPrimary
 import com.nexus.ui.theme.AccentPrimary
 import com.nexus.ui.theme.BackgroundWarm
 import com.nexus.ui.theme.BorderSubtle
+import com.nexus.ui.theme.DestructiveOnPrimary
+import com.nexus.ui.theme.DestructivePrimary
 import com.nexus.ui.theme.ErrorBackground
 import com.nexus.ui.theme.ErrorForeground
 import com.nexus.ui.theme.SuccessBackground
@@ -135,6 +137,25 @@ fun NexusSecondaryButton(
         enabled = enabled,
         containerColor = SurfaceInput,
         contentColor = TextPrimary,
+    )
+}
+
+@Composable
+fun NexusDestructiveButton(
+    label: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    icon: ImageVector? = null,
+    enabled: Boolean = true,
+) {
+    NexusActionButton(
+        label = label,
+        onClick = onClick,
+        modifier = modifier,
+        icon = icon,
+        enabled = enabled,
+        containerColor = DestructivePrimary,
+        contentColor = DestructiveOnPrimary,
     )
 }
 

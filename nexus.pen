@@ -60,7 +60,7 @@
                   "name": "overviewLabel",
                   "fill": "$surface.primary",
                   "content": "概览",
-                  "fontFamily": "Inter",
+                  "fontFamily": "Source Han Sans SC VF",
                   "fontSize": 10,
                   "fontWeight": "500"
                 }
@@ -94,7 +94,7 @@
                   "name": "checkinLabel",
                   "fill": "$foreground.muted",
                   "content": "签到",
-                  "fontFamily": "Inter",
+                  "fontFamily": "Source Han Sans SC VF",
                   "fontSize": 10,
                   "fontWeight": "500"
                 }
@@ -128,7 +128,7 @@
                   "name": "accountLabel",
                   "fill": "$foreground.muted",
                   "content": "账号",
-                  "fontFamily": "Inter",
+                  "fontFamily": "Source Han Sans SC VF",
                   "fontSize": 10,
                   "fontWeight": "500"
                 }
@@ -170,7 +170,7 @@
           "name": "btnText",
           "fill": "$surface.primary",
           "content": "手动同步",
-          "fontFamily": "Inter",
+          "fontFamily": "Source Han Sans SC VF",
           "fontSize": 14,
           "fontWeight": "500"
         }
@@ -208,7 +208,7 @@
           "name": "secText",
           "fill": "$foreground.primary",
           "content": "立即签到",
-          "fontFamily": "Inter",
+          "fontFamily": "Source Han Sans SC VF",
           "fontSize": 14,
           "fontWeight": "500"
         }
@@ -235,7 +235,7 @@
           "name": "chipWarningText",
           "fill": "#E65100",
           "content": "未签到",
-          "fontFamily": "Inter",
+          "fontFamily": "Source Han Sans SC VF",
           "fontSize": 12,
           "fontWeight": "500"
         }
@@ -262,7 +262,7 @@
           "name": "chipErrorText",
           "fill": "#C62828",
           "content": "Token失效",
-          "fontFamily": "Inter",
+          "fontFamily": "Source Han Sans SC VF",
           "fontSize": 12,
           "fontWeight": "500"
         }
@@ -316,7 +316,7 @@
                   "name": "charName",
                   "fill": "$foreground.primary",
                   "content": "角色名称",
-                  "fontFamily": "Funnel Sans",
+                  "fontFamily": "Source Han Sans SC VF",
                   "fontSize": 16,
                   "fontWeight": "600"
                 },
@@ -326,7 +326,7 @@
                   "name": "serverName",
                   "fill": "$foreground.muted",
                   "content": "区服名称",
-                  "fontFamily": "Inter",
+                  "fontFamily": "Source Han Sans SC VF",
                   "fontSize": 12,
                   "fontWeight": "normal"
                 }
@@ -337,7 +337,7 @@
               "type": "ref",
               "ref": "JldTC",
               "name": "statusChip",
-              "x": 235,
+              "x": 205,
               "y": 7.5,
               "width": "fit_content",
               "height": "fit_content",
@@ -347,6 +347,16 @@
                   "y": 6
                 }
               }
+            },
+            {
+              "type": "icon_font",
+              "id": "0CGsA",
+              "name": "deleteBtn",
+              "width": 18,
+              "height": 18,
+              "iconFontName": "trash-2",
+              "iconFontFamily": "lucide",
+              "fill": "#EF4444"
             }
           ]
         },
@@ -374,7 +384,7 @@
               "name": "staminaText",
               "fill": "$foreground.secondary",
               "content": "结晶波片 207/240",
-              "fontFamily": "Inter",
+              "fontFamily": "Source Han Sans SC VF",
               "fontSize": 14,
               "fontWeight": "normal"
             }
@@ -394,7 +404,7 @@
               "name": "weeklyTitle",
               "fill": "$foreground.muted",
               "content": "周常进度",
-              "fontFamily": "Newsreader",
+              "fontFamily": "Source Han Sans SC VF",
               "fontSize": 12,
               "fontWeight": "normal",
               "fontStyle": "italic"
@@ -412,7 +422,7 @@
                   "name": "weeklyItem1",
                   "fill": "$foreground.secondary",
                   "content": "周本 0/3",
-                  "fontFamily": "Inter",
+                  "fontFamily": "Source Han Sans SC VF",
                   "fontSize": 12,
                   "fontWeight": "normal"
                 },
@@ -422,7 +432,7 @@
                   "name": "weeklyItem2",
                   "fill": "$foreground.secondary",
                   "content": "危行 0/7",
-                  "fontFamily": "Inter",
+                  "fontFamily": "Source Han Sans SC VF",
                   "fontSize": 12,
                   "fontWeight": "normal"
                 },
@@ -432,7 +442,7 @@
                   "name": "weeklyItem3",
                   "fill": "$foreground.secondary",
                   "content": "深塔 -",
-                  "fontFamily": "Inter",
+                  "fontFamily": "Source Han Sans SC VF",
                   "fontSize": 12,
                   "fontWeight": "normal"
                 }
@@ -446,7 +456,7 @@
           "name": "updateTime",
           "fill": "$foreground.muted",
           "content": "更新于 10分钟前",
-          "fontFamily": "Newsreader",
+          "fontFamily": "Source Han Sans SC VF",
           "fontSize": 11,
           "fontWeight": "normal",
           "fontStyle": "italic"
@@ -470,7 +480,7 @@
           "name": "inputLabel",
           "fill": "$foreground.secondary",
           "content": "输入标签",
-          "fontFamily": "Inter",
+          "fontFamily": "Source Han Sans SC VF",
           "fontSize": 12,
           "fontWeight": "500"
         },
@@ -491,7 +501,7 @@
               "name": "inputText",
               "fill": "$foreground.muted",
               "content": "输入内容...",
-              "fontFamily": "Inter",
+              "fontFamily": "Source Han Sans SC VF",
               "fontSize": 14,
               "fontWeight": "normal"
             }
@@ -536,7 +546,7 @@
           "name": "emptyTitle",
           "fill": "$foreground.primary",
           "content": "暂无内容",
-          "fontFamily": "Funnel Sans",
+          "fontFamily": "Source Han Sans SC VF",
           "fontSize": 16,
           "fontWeight": "normal"
         },
@@ -547,7 +557,7 @@
           "fill": "$foreground.muted",
           "content": "完成操作后会显示相关信息",
           "textAlign": "center",
-          "fontFamily": "Inter",
+          "fontFamily": "Source Han Sans SC VF",
           "fontSize": 14,
           "fontWeight": "normal"
         }
@@ -598,7 +608,7 @@
               "name": "pageTitle",
               "fill": "$foreground.primary",
               "content": "签到中心",
-              "fontFamily": "Funnel Sans",
+              "fontFamily": "Source Han Sans SC VF",
               "fontSize": 28,
               "fontWeight": "600"
             },
@@ -620,7 +630,8 @@
                 "SlYJs": {
                   "content": "一键签到",
                   "x": 44,
-                  "y": 12
+                  "y": 12,
+                  "fontFamily": "Source Han Sans SC VF"
                 }
               }
             },
@@ -635,17 +646,20 @@
                 "9XgqX": {
                   "iconFontName": "calendar-x",
                   "x": 144,
-                  "y": 32.5
+                  "y": 50.5
                 },
                 "NbNsi": {
                   "content": "暂无签到记录",
                   "x": 115.5,
-                  "y": 88.5
+                  "y": 106.5,
+                  "fontFamily": "Source Han Sans SC VF"
                 },
                 "XpUPA": {
                   "content": "后续会展示每个账号的签到结果与奖励信息",
                   "x": 31,
-                  "y": 127.5
+                  "y": 127.5,
+                  "fontFamily": "Source Han Sans SC VF",
+                  "enabled": false
                 }
               }
             },
@@ -668,7 +682,7 @@
                   "name": "chipSuccessText",
                   "fill": "#2E7D32",
                   "content": "已签到",
-                  "fontFamily": "Inter",
+                  "fontFamily": "Source Han Sans SC VF",
                   "fontSize": 12,
                   "fontWeight": "500"
                 }
@@ -786,7 +800,7 @@
               "name": "pageTitle2",
               "fill": "$foreground.primary",
               "content": "签到中心",
-              "fontFamily": "Funnel Sans",
+              "fontFamily": "Source Han Sans SC VF",
               "fontSize": 28,
               "fontWeight": "600"
             },
@@ -816,7 +830,8 @@
                     "SlYJs": {
                       "content": "一键签到",
                       "x": 44,
-                      "y": 12
+                      "y": 12,
+                      "fontFamily": "Source Han Sans SC VF"
                     }
                   }
                 }
@@ -869,7 +884,7 @@
                           "name": "resultChar1",
                           "fill": "$foreground.primary",
                           "content": "角色A - 概观区",
-                          "fontFamily": "Inter",
+                          "fontFamily": "Source Han Sans SC VF",
                           "fontSize": 14,
                           "fontWeight": "500"
                         },
@@ -879,7 +894,7 @@
                           "name": "resultStatus1",
                           "fill": "#2E7D32",
                           "content": "已签到",
-                          "fontFamily": "Inter",
+                          "fontFamily": "Source Han Sans SC VF",
                           "fontSize": 12,
                           "fontWeight": "normal"
                         }
@@ -891,7 +906,7 @@
                       "name": "resultReward1",
                       "fill": "$foreground.secondary",
                       "content": "奖励：60星声 + 10000金币",
-                      "fontFamily": "Inter",
+                      "fontFamily": "Source Han Sans SC VF",
                       "fontSize": 13,
                       "fontWeight": "normal"
                     },
@@ -901,7 +916,7 @@
                       "name": "resultTime1",
                       "fill": "$foreground.muted",
                       "content": "签到于 09:30",
-                      "fontFamily": "Newsreader",
+                      "fontFamily": "Source Han Sans SC VF",
                       "fontSize": 11,
                       "fontWeight": "normal",
                       "fontStyle": "italic"
@@ -947,7 +962,7 @@
                           "name": "resultChar2",
                           "fill": "$foreground.primary",
                           "content": "角色B - 日区",
-                          "fontFamily": "Inter",
+                          "fontFamily": "Source Han Sans SC VF",
                           "fontSize": 14,
                           "fontWeight": "500"
                         },
@@ -957,7 +972,7 @@
                           "name": "resultStatus2",
                           "fill": "#E65100",
                           "content": "今日已签到",
-                          "fontFamily": "Inter",
+                          "fontFamily": "Source Han Sans SC VF",
                           "fontSize": 12,
                           "fontWeight": "normal"
                         }
@@ -969,7 +984,7 @@
                       "name": "resultReward2",
                       "fill": "$foreground.secondary",
                       "content": "无新奖励",
-                      "fontFamily": "Inter",
+                      "fontFamily": "Source Han Sans SC VF",
                       "fontSize": 13,
                       "fontWeight": "normal"
                     },
@@ -979,7 +994,7 @@
                       "name": "resultTime2",
                       "fill": "$foreground.muted",
                       "content": "最后签到：昨日 08:15",
-                      "fontFamily": "Newsreader",
+                      "fontFamily": "Source Han Sans SC VF",
                       "fontSize": 11,
                       "fontWeight": "normal",
                       "fontStyle": "italic"
@@ -1025,7 +1040,7 @@
                           "name": "resultChar3",
                           "fill": "$foreground.primary",
                           "content": "角色C - 概观区",
-                          "fontFamily": "Inter",
+                          "fontFamily": "Source Han Sans SC VF",
                           "fontSize": 14,
                           "fontWeight": "500"
                         },
@@ -1035,7 +1050,7 @@
                           "name": "resultStatus3",
                           "fill": "#C62828",
                           "content": "Token失效",
-                          "fontFamily": "Inter",
+                          "fontFamily": "Source Han Sans SC VF",
                           "fontSize": 12,
                           "fontWeight": "normal"
                         }
@@ -1047,7 +1062,7 @@
                       "name": "resultMsg3",
                       "fill": "$foreground.secondary",
                       "content": "请重新绑定账号以继续签到",
-                      "fontFamily": "Inter",
+                      "fontFamily": "Source Han Sans SC VF",
                       "fontSize": 13,
                       "fontWeight": "normal"
                     },
@@ -1080,7 +1095,7 @@
                           "name": "retryText3",
                           "fill": "$accent.primary",
                           "content": "重新绑定",
-                          "fontFamily": "Inter",
+                          "fontFamily": "Source Han Sans SC VF",
                           "fontSize": 12,
                           "fontWeight": "500"
                         }
@@ -1201,7 +1216,7 @@
               "name": "headline",
               "fill": "$foreground.primary",
               "content": "概览",
-              "fontFamily": "Funnel Sans",
+              "fontFamily": "Source Han Sans SC VF",
               "fontSize": 28,
               "fontWeight": "600"
             },
@@ -1243,7 +1258,7 @@
                   "name": "summaryTitle",
                   "fill": "$foreground.primary",
                   "content": "今日签到状态",
-                  "fontFamily": "Funnel Sans",
+                  "fontFamily": "Source Han Sans SC VF",
                   "fontSize": 16,
                   "fontWeight": "600"
                 },
@@ -1255,7 +1270,7 @@
                   "textGrowth": "fixed-width",
                   "width": "fill_container",
                   "content": "3 个账号已接入，其中 2 个已完成签到，1 个需要重新授权。",
-                  "fontFamily": "Inter",
+                  "fontFamily": "Source Han Sans SC VF",
                   "fontSize": 14,
                   "fontWeight": "normal"
                 },
@@ -1286,7 +1301,7 @@
                       "ref": "aVv2F",
                       "name": "chipB",
                       "width": "fit_content",
-                      "x": 79,
+                      "x": 78,
                       "y": 0,
                       "descendants": {
                         "2W4af": {
@@ -1300,7 +1315,7 @@
                       "ref": "WB05T",
                       "name": "chipC",
                       "width": "fit_content",
-                      "x": 158,
+                      "x": 156,
                       "y": 0,
                       "descendants": {
                         "f5QOs": {
@@ -1338,7 +1353,7 @@
                 },
                 "kftJn": {
                   "content": "深塔 24/30",
-                  "x": 117
+                  "x": 114
                 },
                 "aSXD9": {
                   "content": "更新于 刚刚"
@@ -1441,21 +1456,9 @@
                   "name": "title",
                   "fill": "$foreground.primary",
                   "content": "账号",
-                  "fontFamily": "Funnel Sans",
+                  "fontFamily": "Source Han Sans SC VF",
                   "fontSize": 28,
                   "fontWeight": "600"
-                },
-                {
-                  "type": "text",
-                  "id": "5sYBx",
-                  "name": "helper",
-                  "fill": "$foreground.secondary",
-                  "textGrowth": "fixed-width",
-                  "width": "fill_container",
-                  "content": "统一管理角色绑定、Token 校验与同步策略。",
-                  "fontFamily": "Inter",
-                  "fontSize": 14,
-                  "fontWeight": "normal"
                 }
               ]
             },
@@ -1480,7 +1483,7 @@
                   "name": "boundTitle",
                   "fill": "$foreground.primary",
                   "content": "当前绑定",
-                  "fontFamily": "Funnel Sans",
+                  "fontFamily": "Source Han Sans SC VF",
                   "fontSize": 16,
                   "fontWeight": "600"
                 },
@@ -1514,7 +1517,7 @@
                           "name": "name",
                           "fill": "$foreground.primary",
                           "content": "今汐",
-                          "fontFamily": "Funnel Sans",
+                          "fontFamily": "Source Han Sans SC VF",
                           "fontSize": 16,
                           "fontWeight": "600"
                         },
@@ -1524,7 +1527,7 @@
                           "name": "server",
                           "fill": "$foreground.muted",
                           "content": "官服 · 月海之滨",
-                          "fontFamily": "Inter",
+                          "fontFamily": "Source Han Sans SC VF",
                           "fontSize": 12,
                           "fontWeight": "normal"
                         }
@@ -1535,13 +1538,23 @@
                       "type": "ref",
                       "ref": "JldTC",
                       "name": "statusChip",
-                      "x": 235,
+                      "x": 205,
                       "y": 7.5,
                       "descendants": {
                         "In3Tm": {
                           "content": "已连接"
                         }
                       }
+                    },
+                    {
+                      "type": "icon_font",
+                      "id": "sDp0l",
+                      "name": "deleteBtn",
+                      "width": 18,
+                      "height": 18,
+                      "iconFontName": "trash-2",
+                      "iconFontFamily": "lucide",
+                      "fill": "#EF4444"
                     }
                   ]
                 }
@@ -1568,9 +1581,37 @@
                   "name": "formTitle",
                   "fill": "$foreground.primary",
                   "content": "新增账号",
-                  "fontFamily": "Funnel Sans",
+                  "fontFamily": "Source Han Sans SC VF",
                   "fontSize": 16,
                   "fontWeight": "600"
+                },
+                {
+                  "id": "dkJq6",
+                  "type": "ref",
+                  "ref": "MeY0h",
+                  "width": 297,
+                  "name": "inputB",
+                  "height": "fit_content",
+                  "x": 16,
+                  "y": 51,
+                  "flipX": false,
+                  "flipY": false,
+                  "descendants": {
+                    "suxoG": {
+                      "content": "Token"
+                    },
+                    "zGi81": {
+                      "width": "fill_container",
+                      "y": 25,
+                      "enabled": true
+                    },
+                    "JEgtE": {
+                      "content": "粘贴令牌后可先做有效性校验",
+                      "x": 12,
+                      "y": 12,
+                      "enabled": false
+                    }
+                  }
                 },
                 {
                   "id": "0Q7gC",
@@ -1579,38 +1620,19 @@
                   "width": "fill_container",
                   "name": "inputA",
                   "x": 16,
-                  "y": 51,
+                  "y": 132,
                   "descendants": {
                     "suxoG": {
-                      "content": "角色昵称"
+                      "content": "账号备注",
+                      "enabled": true,
+                      "context": ""
                     },
                     "zGi81": {
                       "width": "fill_container"
                     },
                     "JEgtE": {
-                      "content": "例如：今汐"
-                    }
-                  }
-                },
-                {
-                  "id": "dkJq6",
-                  "type": "ref",
-                  "ref": "MeY0h",
-                  "width": "fill_container",
-                  "name": "inputB",
-                  "height": "fit_content",
-                  "x": 16,
-                  "y": 132,
-                  "descendants": {
-                    "suxoG": {
-                      "content": "Cookie / Token"
-                    },
-                    "zGi81": {
-                      "width": "fill_container",
-                      "y": 23
-                    },
-                    "JEgtE": {
-                      "content": "粘贴令牌后可先做有效性校验"
+                      "content": "例如：今汐",
+                      "enabled": false
                     }
                   }
                 },
@@ -1622,40 +1644,33 @@
                   "gap": 12,
                   "children": [
                     {
-                      "id": "9dGQl",
-                      "type": "ref",
-                      "ref": "gtVc4",
-                      "width": "fill_container",
-                      "name": "checkBtn",
-                      "x": 0,
-                      "y": 0,
-                      "descendants": {
-                        "dgKbi": {
-                          "iconFontName": "shield-check"
-                        },
-                        "Z5BYh": {
-                          "content": "校验 Token"
-                        }
-                      }
-                    },
-                    {
                       "id": "91w76",
                       "type": "ref",
                       "ref": "1LIyu",
                       "width": "fill_container",
                       "name": "saveBtn",
-                      "x": 154,
+                      "x": 0,
                       "y": 0,
                       "descendants": {
                         "esolK": {
                           "iconFontName": "plus"
                         },
                         "SlYJs": {
-                          "content": "保存账号"
+                          "content": "添加账号"
                         }
                       }
                     }
                   ]
+                },
+                {
+                  "type": "frame",
+                  "id": "1kdzz",
+                  "name": "Frame 1",
+                  "clip": true,
+                  "width": 1,
+                  "height": 1,
+                  "fill": "#FFFFFF",
+                  "layout": "none"
                 }
               ]
             }
@@ -1699,6 +1714,283 @@
               "fill": "$foreground.inverse"
             }
           }
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "6avHV",
+      "x": 2308,
+      "y": 0,
+      "name": "AccountScreen / Delete Confirm",
+      "width": 360,
+      "height": 800,
+      "fill": "$--background",
+      "layout": "none",
+      "children": [
+        {
+          "type": "frame",
+          "id": "SGQbg",
+          "x": 0,
+          "y": 0,
+          "name": "topBar",
+          "width": 360,
+          "height": 62,
+          "padding": [
+            0,
+            20
+          ],
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "gvImI",
+              "name": "titleText",
+              "fill": "$foreground.primary",
+              "content": "账号",
+              "fontFamily": "Source Han Sans SC VF",
+              "fontSize": 28,
+              "fontWeight": "600"
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "0lVAs",
+          "x": 0,
+          "y": 62,
+          "name": "bgContent",
+          "width": 360,
+          "layout": "vertical",
+          "gap": 20,
+          "padding": [
+            24,
+            16,
+            16,
+            16
+          ],
+          "children": [
+            {
+              "type": "frame",
+              "id": "7kLqc",
+              "name": "bgCard",
+              "width": "fill_container",
+              "fill": "$surface.card",
+              "cornerRadius": 12,
+              "stroke": {
+                "thickness": 1,
+                "fill": "$border.subtle"
+              },
+              "layout": "vertical",
+              "gap": 12,
+              "padding": 16,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "WZUFj",
+                  "name": "bgCardTitle",
+                  "fill": "$foreground.primary",
+                  "content": "当前绑定",
+                  "fontFamily": "Source Han Sans SC VF",
+                  "fontSize": 16,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "frame",
+                  "id": "EuXaq",
+                  "name": "bgRow",
+                  "width": "fill_container",
+                  "gap": 12,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "ellipse",
+                      "id": "DC1SN",
+                      "name": "bgAvatar",
+                      "fill": "$surface.secondary",
+                      "width": 40,
+                      "height": 40
+                    },
+                    {
+                      "type": "frame",
+                      "id": "Mwvzz",
+                      "name": "bgInfo",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 4,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "bC1Ry",
+                          "name": "bgName",
+                          "fill": "$foreground.primary",
+                          "content": "今汐",
+                          "fontFamily": "Source Han Sans SC VF",
+                          "fontSize": 16,
+                          "fontWeight": "600"
+                        },
+                        {
+                          "type": "text",
+                          "id": "NgLty",
+                          "name": "bgServer",
+                          "fill": "$foreground.muted",
+                          "content": "官服 · 月海之滨",
+                          "fontFamily": "Source Han Sans SC VF",
+                          "fontSize": 12,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "id": "NKWKS",
+                      "type": "ref",
+                      "ref": "JldTC",
+                      "name": "bgChip",
+                      "descendants": {
+                        "In3Tm": {
+                          "content": "已连接"
+                        }
+                      }
+                    },
+                    {
+                      "type": "icon_font",
+                      "id": "v6QSK",
+                      "name": "bgTrash",
+                      "width": 18,
+                      "height": 18,
+                      "iconFontName": "trash-2",
+                      "iconFontFamily": "lucide",
+                      "fill": "$--destructive"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "tcVbc",
+          "x": 0,
+          "y": 0,
+          "name": "overlay",
+          "width": 360,
+          "height": 800,
+          "fill": "#1A1A1A80"
+        },
+        {
+          "type": "frame",
+          "id": "loCSc",
+          "x": 24,
+          "y": 246,
+          "name": "deleteDialog",
+          "width": 312,
+          "fill": "$surface.card",
+          "cornerRadius": 16,
+          "layout": "vertical",
+          "gap": 16,
+          "padding": 24,
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "J8MrG",
+              "name": "iconWrap",
+              "width": 56,
+              "height": 56,
+              "fill": "#FFE8E5",
+              "cornerRadius": 9999,
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon_font",
+                  "id": "WpO72",
+                  "name": "trashIco",
+                  "width": 24,
+                  "height": 24,
+                  "iconFontName": "trash-2",
+                  "iconFontFamily": "lucide",
+                  "fill": "$--destructive"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "4ckjV",
+              "name": "dlgHeader",
+              "width": "fill_container",
+              "justifyContent": "space_between",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "vUJ5U",
+                  "name": "dlgTitleText",
+                  "fill": "$foreground.primary",
+                  "content": "删除账号",
+                  "fontFamily": "Source Han Sans SC VF",
+                  "fontSize": 18,
+                  "fontWeight": "600"
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "id": "094Xg",
+              "name": "dlgDesc",
+              "fill": "$foreground.secondary",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "此操作无法撤销，有相关数据将被清除。",
+              "textAlign": "center",
+              "fontFamily": "Source Han Sans SC VF",
+              "fontSize": 14,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "frame",
+              "id": "T2bdF",
+              "name": "btnRow",
+              "width": "fill_container",
+              "gap": 12,
+              "children": [
+                {
+                  "id": "5ZnmL",
+                  "type": "ref",
+                  "ref": "gtVc4",
+                  "width": "fill_container",
+                  "name": "cancelBtn",
+                  "descendants": {
+                    "dgKbi": {
+                      "enabled": false
+                    },
+                    "Z5BYh": {
+                      "content": "取消"
+                    }
+                  }
+                },
+                {
+                  "id": "C1HOL",
+                  "type": "ref",
+                  "ref": "1LIyu",
+                  "width": "fill_container",
+                  "fill": "$--destructive",
+                  "name": "deleteBtn",
+                  "descendants": {
+                    "esolK": {
+                      "iconFontName": "trash-2",
+                      "fill": "$foreground.inverse"
+                    },
+                    "SlYJs": {
+                      "content": "确认删除",
+                      "fill": "$foreground.inverse"
+                    }
+                  }
+                }
+              ]
+            }
+          ]
         }
       ]
     }
@@ -2313,5 +2605,22 @@
       "type": "number",
       "value": 6
     }
-  }
+  },
+  "fonts": [
+    {
+      "name": "Source Han Sans SC VF",
+      "url": "SourceHanSansSC-VF.otf",
+      "weight": [
+        250,
+        900
+      ],
+      "axes": [
+        {
+          "tag": "wght",
+          "start": 250,
+          "end": 900
+        }
+      ]
+    }
+  ]
 }

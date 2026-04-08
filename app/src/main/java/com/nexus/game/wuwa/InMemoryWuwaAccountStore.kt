@@ -17,4 +17,8 @@ class InMemoryWuwaAccountStore : WuwaAccountStore {
     }
 
     override suspend fun getAccounts(): List<WuwaAccount> = accounts.values.toList()
+
+    override suspend fun delete(accountId: Long) {
+        accounts.remove(accountId)
+    }
 }

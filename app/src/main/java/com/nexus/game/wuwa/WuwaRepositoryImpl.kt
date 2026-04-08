@@ -64,6 +64,13 @@ class WuwaRepositoryImpl(
         return OperationResult.Success(savedAccount)
     }
 
+    override suspend fun deleteAccount(accountId: Long): OperationResult<Unit> {
+        accountStore.delete(accountId)
+        tokenStore.delete(accountId)
+        snapshotStore.delete(accountId)
+        return OperationResult.Success(Unit)
+    }
+
     override suspend fun syncAccounts(): OperationResult<List<DashboardCardModel>> {
         val cards = accountStore.getAccounts().mapNotNull { account ->
             val token = tokenStore.get(account.id) ?: return@mapNotNull null
@@ -74,6 +81,10 @@ class WuwaRepositoryImpl(
 
     override suspend fun bindWuwaAccount(token: String, nickname: String?): OperationResult<WuwaAccount> {
         return bindAccount(token, nickname)
+    }
+
+    override suspend fun deleteWuwaAccount(accountId: Long): OperationResult<Unit> {
+        return deleteAccount(accountId)
     }
 
     override suspend fun sync(): OperationResult<List<DashboardCardModel>> {

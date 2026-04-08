@@ -10,4 +10,8 @@ class InMemoryWuwaSnapshotStore : WuwaSnapshotStore {
     }
 
     override suspend fun getCards(): List<DashboardCardModel> = cardsByAccount.values.toList()
+
+    override suspend fun delete(accountId: Long) {
+        cardsByAccount.remove(accountId)
+    }
 }
