@@ -1,12 +1,12 @@
 package com.nexus.core.network
 
+import com.nexus.app.BuildConfig
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import com.nexus.game.wuwa.api.WuwaRoleApi
 import com.nexus.game.wuwa.api.WuwaWidgetApi
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
-import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 
 object NetworkModule {
@@ -16,11 +16,11 @@ object NetworkModule {
     }
 
     private val okHttpClient = OkHttpClient.Builder()
-        .addInterceptor(
-            HttpLoggingInterceptor().apply {
-                level = HttpLoggingInterceptor.Level.BASIC
-            },
-        )
+        .apply {
+            if (BuildConfig.DEBUG) {
+                addInterceptor(DebugHttpLoggingInterceptor())
+            }
+        }
         .build()
 
     private val retrofit = Retrofit.Builder()
