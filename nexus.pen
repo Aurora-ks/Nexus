@@ -60,7 +60,7 @@
                   "name": "overviewLabel",
                   "fill": "$surface.primary",
                   "content": "概览",
-                  "fontFamily": "Source Han Sans SC VF",
+                  "fontFamily": "NotoSansSC",
                   "fontSize": 10,
                   "fontWeight": "500"
                 }
@@ -94,7 +94,7 @@
                   "name": "checkinLabel",
                   "fill": "$foreground.muted",
                   "content": "签到",
-                  "fontFamily": "Source Han Sans SC VF",
+                  "fontFamily": "NotoSansSC",
                   "fontSize": 10,
                   "fontWeight": "500"
                 }
@@ -128,7 +128,7 @@
                   "name": "accountLabel",
                   "fill": "$foreground.muted",
                   "content": "账号",
-                  "fontFamily": "Source Han Sans SC VF",
+                  "fontFamily": "NotoSansSC",
                   "fontSize": 10,
                   "fontWeight": "500"
                 }
@@ -170,7 +170,7 @@
           "name": "btnText",
           "fill": "$surface.primary",
           "content": "手动同步",
-          "fontFamily": "Source Han Sans SC VF",
+          "fontFamily": "NotoSansSC",
           "fontSize": 14,
           "fontWeight": "500"
         }
@@ -208,7 +208,7 @@
           "name": "secText",
           "fill": "$foreground.primary",
           "content": "立即签到",
-          "fontFamily": "Source Han Sans SC VF",
+          "fontFamily": "NotoSansSC",
           "fontSize": 14,
           "fontWeight": "500"
         }
@@ -235,7 +235,7 @@
           "name": "chipWarningText",
           "fill": "#E65100",
           "content": "未签到",
-          "fontFamily": "Source Han Sans SC VF",
+          "fontFamily": "NotoSansSC",
           "fontSize": 12,
           "fontWeight": "500"
         }
@@ -262,7 +262,7 @@
           "name": "chipErrorText",
           "fill": "#C62828",
           "content": "Token失效",
-          "fontFamily": "Source Han Sans SC VF",
+          "fontFamily": "NotoSansSC",
           "fontSize": 12,
           "fontWeight": "500"
         }
@@ -316,7 +316,7 @@
                   "name": "charName",
                   "fill": "$foreground.primary",
                   "content": "角色名称",
-                  "fontFamily": "Source Han Sans SC VF",
+                  "fontFamily": "NotoSansSC",
                   "fontSize": 16,
                   "fontWeight": "600"
                 },
@@ -326,7 +326,7 @@
                   "name": "serverName",
                   "fill": "$foreground.muted",
                   "content": "区服名称",
-                  "fontFamily": "Source Han Sans SC VF",
+                  "fontFamily": "NotoSansSC",
                   "fontSize": 12,
                   "fontWeight": "normal"
                 }
@@ -384,7 +384,7 @@
               "name": "staminaText",
               "fill": "$foreground.secondary",
               "content": "结晶波片 207/240",
-              "fontFamily": "Source Han Sans SC VF",
+              "fontFamily": "NotoSansSC",
               "fontSize": 14,
               "fontWeight": "normal"
             }
@@ -404,7 +404,7 @@
               "name": "weeklyTitle",
               "fill": "$foreground.muted",
               "content": "周常进度",
-              "fontFamily": "Source Han Sans SC VF",
+              "fontFamily": "NotoSansSC",
               "fontSize": 12,
               "fontWeight": "normal",
               "fontStyle": "italic"
@@ -422,7 +422,7 @@
                   "name": "weeklyItem1",
                   "fill": "$foreground.secondary",
                   "content": "周本 0/3",
-                  "fontFamily": "Source Han Sans SC VF",
+                  "fontFamily": "NotoSansSC",
                   "fontSize": 12,
                   "fontWeight": "normal"
                 },
@@ -432,7 +432,7 @@
                   "name": "weeklyItem2",
                   "fill": "$foreground.secondary",
                   "content": "危行 0/7",
-                  "fontFamily": "Source Han Sans SC VF",
+                  "fontFamily": "NotoSansSC",
                   "fontSize": 12,
                   "fontWeight": "normal"
                 },
@@ -442,7 +442,7 @@
                   "name": "weeklyItem3",
                   "fill": "$foreground.secondary",
                   "content": "深塔 -",
-                  "fontFamily": "Source Han Sans SC VF",
+                  "fontFamily": "NotoSansSC",
                   "fontSize": 12,
                   "fontWeight": "normal"
                 }
@@ -456,7 +456,7 @@
           "name": "updateTime",
           "fill": "$foreground.muted",
           "content": "更新于 10分钟前",
-          "fontFamily": "Source Han Sans SC VF",
+          "fontFamily": "NotoSansSC",
           "fontSize": 11,
           "fontWeight": "normal",
           "fontStyle": "italic"
@@ -480,7 +480,7 @@
           "name": "inputLabel",
           "fill": "$foreground.secondary",
           "content": "输入标签",
-          "fontFamily": "Source Han Sans SC VF",
+          "fontFamily": "NotoSansSC",
           "fontSize": 12,
           "fontWeight": "500"
         },
@@ -501,7 +501,7 @@
               "name": "inputText",
               "fill": "$foreground.muted",
               "content": "输入内容...",
-              "fontFamily": "Source Han Sans SC VF",
+              "fontFamily": "NotoSansSC",
               "fontSize": 14,
               "fontWeight": "normal"
             }
@@ -546,7 +546,7 @@
           "name": "emptyTitle",
           "fill": "$foreground.primary",
           "content": "暂无内容",
-          "fontFamily": "Source Han Sans SC VF",
+          "fontFamily": "NotoSansSC",
           "fontSize": 16,
           "fontWeight": "normal"
         },
@@ -557,7 +557,7 @@
           "fill": "$foreground.muted",
           "content": "完成操作后会显示相关信息",
           "textAlign": "center",
-          "fontFamily": "Source Han Sans SC VF",
+          "fontFamily": "NotoSansSC",
           "fontSize": 14,
           "fontWeight": "normal"
         }
@@ -608,7 +608,7 @@
               "name": "pageTitle",
               "fill": "$foreground.primary",
               "content": "签到中心",
-              "fontFamily": "Source Han Sans SC VF",
+              "fontFamily": "NotoSansSC",
               "fontSize": 28,
               "fontWeight": "600"
             },
@@ -631,7 +631,7 @@
                   "content": "一键签到",
                   "x": 44,
                   "y": 12,
-                  "fontFamily": "Source Han Sans SC VF"
+                  "fontFamily": "NotoSansSC"
                 }
               }
             },
@@ -652,13 +652,13 @@
                   "content": "暂无签到记录",
                   "x": 115.5,
                   "y": 106.5,
-                  "fontFamily": "Source Han Sans SC VF"
+                  "fontFamily": "NotoSansSC"
                 },
                 "XpUPA": {
                   "content": "后续会展示每个账号的签到结果与奖励信息",
                   "x": 31,
                   "y": 127.5,
-                  "fontFamily": "Source Han Sans SC VF",
+                  "fontFamily": "NotoSansSC",
                   "enabled": false
                 }
               }
@@ -682,7 +682,7 @@
                   "name": "chipSuccessText",
                   "fill": "#2E7D32",
                   "content": "已签到",
-                  "fontFamily": "Source Han Sans SC VF",
+                  "fontFamily": "NotoSansSC",
                   "fontSize": 12,
                   "fontWeight": "500"
                 }
@@ -800,7 +800,7 @@
               "name": "pageTitle2",
               "fill": "$foreground.primary",
               "content": "签到中心",
-              "fontFamily": "Source Han Sans SC VF",
+              "fontFamily": "NotoSansSC",
               "fontSize": 28,
               "fontWeight": "600"
             },
@@ -831,7 +831,7 @@
                       "content": "一键签到",
                       "x": 44,
                       "y": 12,
-                      "fontFamily": "Source Han Sans SC VF"
+                      "fontFamily": "NotoSansSC"
                     }
                   }
                 }
@@ -884,7 +884,7 @@
                           "name": "resultChar1",
                           "fill": "$foreground.primary",
                           "content": "角色A - 概观区",
-                          "fontFamily": "Source Han Sans SC VF",
+                          "fontFamily": "NotoSansSC",
                           "fontSize": 14,
                           "fontWeight": "500"
                         },
@@ -894,7 +894,7 @@
                           "name": "resultStatus1",
                           "fill": "#2E7D32",
                           "content": "已签到",
-                          "fontFamily": "Source Han Sans SC VF",
+                          "fontFamily": "NotoSansSC",
                           "fontSize": 12,
                           "fontWeight": "normal"
                         }
@@ -906,7 +906,7 @@
                       "name": "resultReward1",
                       "fill": "$foreground.secondary",
                       "content": "奖励：60星声 + 10000金币",
-                      "fontFamily": "Source Han Sans SC VF",
+                      "fontFamily": "NotoSansSC",
                       "fontSize": 13,
                       "fontWeight": "normal"
                     },
@@ -916,7 +916,7 @@
                       "name": "resultTime1",
                       "fill": "$foreground.muted",
                       "content": "签到于 09:30",
-                      "fontFamily": "Source Han Sans SC VF",
+                      "fontFamily": "NotoSansSC",
                       "fontSize": 11,
                       "fontWeight": "normal",
                       "fontStyle": "italic"
@@ -962,7 +962,7 @@
                           "name": "resultChar2",
                           "fill": "$foreground.primary",
                           "content": "角色B - 日区",
-                          "fontFamily": "Source Han Sans SC VF",
+                          "fontFamily": "NotoSansSC",
                           "fontSize": 14,
                           "fontWeight": "500"
                         },
@@ -972,7 +972,7 @@
                           "name": "resultStatus2",
                           "fill": "#E65100",
                           "content": "今日已签到",
-                          "fontFamily": "Source Han Sans SC VF",
+                          "fontFamily": "NotoSansSC",
                           "fontSize": 12,
                           "fontWeight": "normal"
                         }
@@ -984,7 +984,7 @@
                       "name": "resultReward2",
                       "fill": "$foreground.secondary",
                       "content": "无新奖励",
-                      "fontFamily": "Source Han Sans SC VF",
+                      "fontFamily": "NotoSansSC",
                       "fontSize": 13,
                       "fontWeight": "normal"
                     },
@@ -994,7 +994,7 @@
                       "name": "resultTime2",
                       "fill": "$foreground.muted",
                       "content": "最后签到：昨日 08:15",
-                      "fontFamily": "Source Han Sans SC VF",
+                      "fontFamily": "NotoSansSC",
                       "fontSize": 11,
                       "fontWeight": "normal",
                       "fontStyle": "italic"
@@ -1040,7 +1040,7 @@
                           "name": "resultChar3",
                           "fill": "$foreground.primary",
                           "content": "角色C - 概观区",
-                          "fontFamily": "Source Han Sans SC VF",
+                          "fontFamily": "NotoSansSC",
                           "fontSize": 14,
                           "fontWeight": "500"
                         },
@@ -1050,7 +1050,7 @@
                           "name": "resultStatus3",
                           "fill": "#C62828",
                           "content": "Token失效",
-                          "fontFamily": "Source Han Sans SC VF",
+                          "fontFamily": "NotoSansSC",
                           "fontSize": 12,
                           "fontWeight": "normal"
                         }
@@ -1062,7 +1062,7 @@
                       "name": "resultMsg3",
                       "fill": "$foreground.secondary",
                       "content": "请重新绑定账号以继续签到",
-                      "fontFamily": "Source Han Sans SC VF",
+                      "fontFamily": "NotoSansSC",
                       "fontSize": 13,
                       "fontWeight": "normal"
                     },
@@ -1095,7 +1095,7 @@
                           "name": "retryText3",
                           "fill": "$accent.primary",
                           "content": "重新绑定",
-                          "fontFamily": "Source Han Sans SC VF",
+                          "fontFamily": "NotoSansSC",
                           "fontSize": 12,
                           "fontWeight": "500"
                         }
@@ -1216,7 +1216,7 @@
               "name": "headline",
               "fill": "$foreground.primary",
               "content": "概览",
-              "fontFamily": "Source Han Sans SC VF",
+              "fontFamily": "Noto Sans SC",
               "fontSize": 28,
               "fontWeight": "600"
             },
@@ -1233,7 +1233,8 @@
                   "iconFontName": "refresh-cw"
                 },
                 "SlYJs": {
-                  "content": "刷新概览"
+                  "content": "刷新概览",
+                  "fontFamily": "Noto Sans SC"
                 }
               }
             },
@@ -1258,7 +1259,7 @@
                   "name": "summaryTitle",
                   "fill": "$foreground.primary",
                   "content": "今日签到状态",
-                  "fontFamily": "Source Han Sans SC VF",
+                  "fontFamily": "Noto Sans SC",
                   "fontSize": 16,
                   "fontWeight": "600"
                 },
@@ -1270,7 +1271,7 @@
                   "textGrowth": "fixed-width",
                   "width": "fill_container",
                   "content": "3 个账号已接入，其中 2 个已完成签到，1 个需要重新授权。",
-                  "fontFamily": "Source Han Sans SC VF",
+                  "fontFamily": "Noto Sans SC",
                   "fontSize": 14,
                   "fontWeight": "normal"
                 },
@@ -1291,7 +1292,8 @@
                       "y": 0,
                       "descendants": {
                         "In3Tm": {
-                          "content": "2 已签到"
+                          "content": "2 已签到",
+                          "fontFamily": "Noto Sans SC"
                         }
                       }
                     },
@@ -1305,7 +1307,8 @@
                       "y": 0,
                       "descendants": {
                         "2W4af": {
-                          "content": "0 待处理"
+                          "content": "0 待处理",
+                          "fontFamily": "Noto Sans SC"
                         }
                       }
                     },
@@ -1319,7 +1322,8 @@
                       "y": 0,
                       "descendants": {
                         "f5QOs": {
-                          "content": "1 异常"
+                          "content": "1 异常",
+                          "fontFamily": "Noto Sans SC"
                         }
                       }
                     }
@@ -1337,26 +1341,39 @@
               "y": 317,
               "descendants": {
                 "zx35R": {
-                  "content": "今汐"
+                  "content": "今汐",
+                  "fontFamily": "Noto Sans SC"
                 },
                 "jaUCZ": {
-                  "content": "官服 · 月海之滨"
+                  "content": "官服 · 月海之滨",
+                  "fontFamily": "Noto Sans SC"
+                },
+                "U7rNY/In3Tm": {
+                  "fontFamily": "Noto Sans SC"
                 },
                 "d04Pc": {
-                  "content": "结晶波片 228/240"
+                  "content": "结晶波片 228/240",
+                  "fontFamily": "Noto Sans SC"
+                },
+                "3wner": {
+                  "fontFamily": "Noto Sans SC"
                 },
                 "usKgR": {
-                  "content": "周本 2/3"
+                  "content": "周本 2/3",
+                  "fontFamily": "Noto Sans SC"
                 },
                 "rDFsz": {
-                  "content": "危行 5/7"
+                  "content": "危行 5/7",
+                  "fontFamily": "Noto Sans SC"
                 },
                 "kftJn": {
                   "content": "深塔 24/30",
-                  "x": 114
+                  "x": 114,
+                  "fontFamily": "Noto Sans SC"
                 },
                 "aSXD9": {
-                  "content": "更新于 刚刚"
+                  "content": "更新于 刚刚",
+                  "fontFamily": "Noto Sans SC"
                 }
               }
             }
@@ -1380,7 +1397,8 @@
             },
             "mEhhG": {
               "content": "概览",
-              "fill": "$foreground.inverse"
+              "fill": "$foreground.inverse",
+              "fontFamily": "Noto Sans SC"
             },
             "QZeW6": {
               "fill": "#00000000"
@@ -1389,7 +1407,8 @@
               "fill": "$foreground.muted"
             },
             "kO5Wx": {
-              "fill": "$foreground.muted"
+              "fill": "$foreground.muted",
+              "fontFamily": "Noto Sans SC"
             },
             "b7RoB": {
               "fill": "#00000000"
@@ -1398,7 +1417,8 @@
               "fill": "$foreground.muted"
             },
             "IdeQa": {
-              "fill": "$foreground.muted"
+              "fill": "$foreground.muted",
+              "fontFamily": "Noto Sans SC"
             }
           }
         }
@@ -1456,7 +1476,7 @@
                   "name": "title",
                   "fill": "$foreground.primary",
                   "content": "账号",
-                  "fontFamily": "Source Han Sans SC VF",
+                  "fontFamily": "Noto Sans SC",
                   "fontSize": 28,
                   "fontWeight": "600"
                 }
@@ -1478,27 +1498,38 @@
               "padding": 16,
               "children": [
                 {
-                  "type": "text",
-                  "id": "NZVDP",
-                  "name": "boundTitle",
-                  "fill": "$foreground.primary",
-                  "content": "当前绑定",
-                  "fontFamily": "Source Han Sans SC VF",
-                  "fontSize": 16,
-                  "fontWeight": "600"
+                  "type": "frame",
+                  "id": "1UdvU",
+                  "name": "titleBar",
+                  "width": "fill_container",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "CYEDF",
+                      "name": "boundTitle",
+                      "fill": "$foreground.primary",
+                      "content": "当前绑定",
+                      "fontFamily": "Noto Sans SC",
+                      "fontSize": 16,
+                      "fontWeight": "600"
+                    }
+                  ]
                 },
                 {
                   "type": "frame",
                   "id": "eO1nd",
                   "name": "boundRow",
                   "width": "fill_container",
-                  "gap": 12,
+                  "gap": 8,
+                  "justifyContent": "space_between",
                   "alignItems": "center",
                   "children": [
                     {
                       "type": "ellipse",
                       "id": "kETuo",
                       "name": "avatar",
+                      "rotation": 0.36383843402931615,
                       "fill": "$surface.secondary",
                       "width": 40,
                       "height": 40
@@ -1517,7 +1548,7 @@
                           "name": "name",
                           "fill": "$foreground.primary",
                           "content": "今汐",
-                          "fontFamily": "Source Han Sans SC VF",
+                          "fontFamily": "Noto Sans SC",
                           "fontSize": 16,
                           "fontWeight": "600"
                         },
@@ -1527,7 +1558,7 @@
                           "name": "server",
                           "fill": "$foreground.muted",
                           "content": "官服 · 月海之滨",
-                          "fontFamily": "Source Han Sans SC VF",
+                          "fontFamily": "Noto Sans SC",
                           "fontSize": 12,
                           "fontWeight": "normal"
                         }
@@ -1538,11 +1569,12 @@
                       "type": "ref",
                       "ref": "JldTC",
                       "name": "statusChip",
-                      "x": 205,
+                      "x": 171,
                       "y": 7.5,
                       "descendants": {
                         "In3Tm": {
-                          "content": "已连接"
+                          "content": "已连接",
+                          "fontFamily": "Noto Sans SC"
                         }
                       }
                     },
@@ -1555,6 +1587,28 @@
                       "iconFontName": "trash-2",
                       "iconFontFamily": "lucide",
                       "fill": "#EF4444"
+                    },
+                    {
+                      "id": "gLVT7",
+                      "type": "ref",
+                      "ref": "gtVc4",
+                      "name": "editRemarkBtn",
+                      "padding": 8,
+                      "gap": 0,
+                      "fill": [],
+                      "descendants": {
+                        "dgKbi": {
+                          "iconFontName": "pencil",
+                          "width": 14,
+                          "height": 14
+                        },
+                        "Z5BYh": {
+                          "content": "",
+                          "fontSize": 12,
+                          "enabled": false,
+                          "fontFamily": "Noto Sans SC"
+                        }
+                      }
                     }
                   ]
                 }
@@ -1581,7 +1635,7 @@
                   "name": "formTitle",
                   "fill": "$foreground.primary",
                   "content": "新增账号",
-                  "fontFamily": "Source Han Sans SC VF",
+                  "fontFamily": "Noto Sans SC",
                   "fontSize": 16,
                   "fontWeight": "600"
                 },
@@ -1598,7 +1652,8 @@
                   "flipY": false,
                   "descendants": {
                     "suxoG": {
-                      "content": "Token"
+                      "content": "Token",
+                      "fontFamily": "Noto Sans SC"
                     },
                     "zGi81": {
                       "width": "fill_container",
@@ -1609,7 +1664,8 @@
                       "content": "粘贴令牌后可先做有效性校验",
                       "x": 12,
                       "y": 12,
-                      "enabled": false
+                      "enabled": false,
+                      "fontFamily": "Noto Sans SC"
                     }
                   }
                 },
@@ -1625,14 +1681,16 @@
                     "suxoG": {
                       "content": "账号备注",
                       "enabled": true,
-                      "context": ""
+                      "context": "",
+                      "fontFamily": "Noto Sans SC"
                     },
                     "zGi81": {
                       "width": "fill_container"
                     },
                     "JEgtE": {
                       "content": "例如：今汐",
-                      "enabled": false
+                      "enabled": false,
+                      "fontFamily": "Noto Sans SC"
                     }
                   }
                 },
@@ -1656,7 +1714,8 @@
                           "iconFontName": "plus"
                         },
                         "SlYJs": {
-                          "content": "添加账号"
+                          "content": "添加账号",
+                          "fontFamily": "Noto Sans SC"
                         }
                       }
                     }
@@ -1693,7 +1752,8 @@
               "fill": "$foreground.muted"
             },
             "mEhhG": {
-              "fill": "$foreground.muted"
+              "fill": "$foreground.muted",
+              "fontFamily": "Noto Sans SC"
             },
             "QZeW6": {
               "fill": "#00000000"
@@ -1702,7 +1762,8 @@
               "fill": "$foreground.muted"
             },
             "kO5Wx": {
-              "fill": "$foreground.muted"
+              "fill": "$foreground.muted",
+              "fontFamily": "Noto Sans SC"
             },
             "b7RoB": {
               "fill": "$accent.primary"
@@ -1711,7 +1772,8 @@
               "fill": "$foreground.inverse"
             },
             "IdeQa": {
-              "fill": "$foreground.inverse"
+              "fill": "$foreground.inverse",
+              "fontFamily": "Noto Sans SC"
             }
           }
         }
@@ -1748,7 +1810,7 @@
               "name": "titleText",
               "fill": "$foreground.primary",
               "content": "账号",
-              "fontFamily": "Source Han Sans SC VF",
+              "fontFamily": "Noto Sans SC",
               "fontSize": 28,
               "fontWeight": "600"
             }
@@ -1791,7 +1853,7 @@
                   "name": "bgCardTitle",
                   "fill": "$foreground.primary",
                   "content": "当前绑定",
-                  "fontFamily": "Source Han Sans SC VF",
+                  "fontFamily": "Noto Sans SC",
                   "fontSize": 16,
                   "fontWeight": "600"
                 },
@@ -1825,7 +1887,7 @@
                           "name": "bgName",
                           "fill": "$foreground.primary",
                           "content": "今汐",
-                          "fontFamily": "Source Han Sans SC VF",
+                          "fontFamily": "Noto Sans SC",
                           "fontSize": 16,
                           "fontWeight": "600"
                         },
@@ -1835,7 +1897,7 @@
                           "name": "bgServer",
                           "fill": "$foreground.muted",
                           "content": "官服 · 月海之滨",
-                          "fontFamily": "Source Han Sans SC VF",
+                          "fontFamily": "Noto Sans SC",
                           "fontSize": 12,
                           "fontWeight": "normal"
                         }
@@ -1848,7 +1910,8 @@
                       "name": "bgChip",
                       "descendants": {
                         "In3Tm": {
-                          "content": "已连接"
+                          "content": "已连接",
+                          "fontFamily": "Noto Sans SC"
                         }
                       }
                     },
@@ -1929,7 +1992,7 @@
                   "name": "dlgTitleText",
                   "fill": "$foreground.primary",
                   "content": "删除账号",
-                  "fontFamily": "Source Han Sans SC VF",
+                  "fontFamily": "Noto Sans SC",
                   "fontSize": 18,
                   "fontWeight": "600"
                 }
@@ -1942,9 +2005,9 @@
               "fill": "$foreground.secondary",
               "textGrowth": "fixed-width",
               "width": "fill_container",
-              "content": "此操作无法撤销，有相关数据将被清除。",
+              "content": "此操作无法撤销，相关数据将被清除。",
               "textAlign": "center",
-              "fontFamily": "Source Han Sans SC VF",
+              "fontFamily": "Noto Sans SC",
               "fontSize": 14,
               "fontWeight": "normal"
             },
@@ -1966,7 +2029,8 @@
                       "enabled": false
                     },
                     "Z5BYh": {
-                      "content": "取消"
+                      "content": "取消",
+                      "fontFamily": "Noto Sans SC"
                     }
                   }
                 },
@@ -1984,7 +2048,303 @@
                     },
                     "SlYJs": {
                       "content": "确认删除",
-                      "fill": "$foreground.inverse"
+                      "fill": "$foreground.inverse",
+                      "fontFamily": "Noto Sans SC"
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "K0eI5",
+      "x": 2748,
+      "y": 0,
+      "name": "AccountScreen / Edit Remark Modal",
+      "width": 360,
+      "height": 800,
+      "fill": "$--background",
+      "layout": "none",
+      "children": [
+        {
+          "type": "frame",
+          "id": "W779t",
+          "x": 0,
+          "y": 0,
+          "name": "topBar",
+          "width": 360,
+          "height": 62,
+          "padding": [
+            0,
+            20
+          ],
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "lyvFB",
+              "name": "titleText",
+              "fill": "$foreground.primary",
+              "content": "账号",
+              "fontFamily": "Noto Sans SC",
+              "fontSize": 28,
+              "fontWeight": "600"
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "Xpl5B",
+          "x": 0,
+          "y": 62,
+          "name": "bgContent",
+          "width": 360,
+          "layout": "vertical",
+          "gap": 20,
+          "padding": [
+            24,
+            16,
+            16,
+            16
+          ],
+          "children": [
+            {
+              "type": "frame",
+              "id": "iGrNq",
+              "name": "bgCard",
+              "width": "fill_container",
+              "fill": "$surface.card",
+              "cornerRadius": 12,
+              "stroke": {
+                "thickness": 1,
+                "fill": "$border.subtle"
+              },
+              "layout": "vertical",
+              "gap": 12,
+              "padding": 16,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "EIUkP",
+                  "name": "bgCardTitle",
+                  "fill": "$foreground.primary",
+                  "content": "当前绑定",
+                  "fontFamily": "Noto Sans SC",
+                  "fontSize": 16,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "frame",
+                  "id": "eCgGy",
+                  "name": "bgRow",
+                  "width": "fill_container",
+                  "gap": 12,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "ellipse",
+                      "id": "CeVF8",
+                      "name": "bgAvatar",
+                      "fill": "$surface.secondary",
+                      "width": 40,
+                      "height": 40
+                    },
+                    {
+                      "type": "frame",
+                      "id": "TaD4d",
+                      "name": "bgInfo",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 4,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "Mb8jF",
+                          "name": "bgName",
+                          "fill": "$foreground.primary",
+                          "content": "今汐",
+                          "fontFamily": "Noto Sans SC",
+                          "fontSize": 16,
+                          "fontWeight": "600"
+                        },
+                        {
+                          "type": "text",
+                          "id": "0CKtF",
+                          "name": "bgServer",
+                          "fill": "$foreground.muted",
+                          "content": "官服 · 月海之滨",
+                          "fontFamily": "Noto Sans SC",
+                          "fontSize": 12,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "id": "VXvWa",
+                      "type": "ref",
+                      "ref": "JldTC",
+                      "name": "bgChip",
+                      "descendants": {
+                        "In3Tm": {
+                          "content": "已连接",
+                          "fontFamily": "Noto Sans SC"
+                        }
+                      }
+                    },
+                    {
+                      "type": "icon_font",
+                      "id": "7Wd2o",
+                      "name": "bgTrash",
+                      "width": 18,
+                      "height": 18,
+                      "iconFontName": "trash-2",
+                      "iconFontFamily": "lucide",
+                      "fill": "$--destructive"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "uLZSn",
+          "x": 0,
+          "y": 0,
+          "name": "overlay",
+          "width": 360,
+          "height": 800,
+          "fill": "#1A1A1A80"
+        },
+        {
+          "type": "frame",
+          "id": "nsj7J",
+          "x": 24,
+          "y": 246,
+          "name": "deleteDialog",
+          "width": 312,
+          "fill": "$surface.card",
+          "cornerRadius": 16,
+          "layout": "vertical",
+          "gap": 16,
+          "padding": 24,
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "i93wc",
+              "name": "iconWrap",
+              "width": 56,
+              "height": 56,
+              "fill": "#F8EEE5",
+              "cornerRadius": 9999,
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon_font",
+                  "id": "eZ0iN",
+                  "name": "trashIco",
+                  "width": 24,
+                  "height": 24,
+                  "iconFontName": "pencil",
+                  "iconFontFamily": "lucide",
+                  "fill": "$accent.primary"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "Vifsk",
+              "name": "dlgHeader",
+              "width": "fill_container",
+              "justifyContent": "space_between",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "MKBwi",
+                  "name": "dlgTitleText",
+                  "fill": "$foreground.primary",
+                  "content": "修改备注",
+                  "fontFamily": "Noto Sans SC",
+                  "fontSize": 18,
+                  "fontWeight": "600"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "J1fD2",
+              "name": "remarkForm",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 12,
+              "children": [
+                {
+                  "id": "DnsV9",
+                  "type": "ref",
+                  "ref": "MeY0h",
+                  "width": "fill_container",
+                  "descendants": {
+                    "suxoG": {
+                      "content": "账号备注",
+                      "fontFamily": "Noto Sans SC"
+                    },
+                    "JEgtE": {
+                      "content": "",
+                      "name": "inputText",
+                      "enabled": true,
+                      "fontFamily": "Noto Sans SC"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "HRZs6",
+              "name": "btnRow",
+              "width": "fill_container",
+              "gap": 12,
+              "children": [
+                {
+                  "id": "a439F",
+                  "type": "ref",
+                  "ref": "gtVc4",
+                  "width": "fill_container",
+                  "name": "cancelBtn",
+                  "descendants": {
+                    "dgKbi": {
+                      "enabled": false
+                    },
+                    "Z5BYh": {
+                      "content": "取消",
+                      "fontFamily": "Noto Sans SC"
+                    }
+                  }
+                },
+                {
+                  "id": "W8gRT",
+                  "type": "ref",
+                  "ref": "1LIyu",
+                  "fill": "$accent.primary",
+                  "width": "fill_container",
+                  "name": "deleteBtn",
+                  "descendants": {
+                    "esolK": {
+                      "iconFontName": "check",
+                      "fill": "$surface.primary"
+                    },
+                    "SlYJs": {
+                      "content": "保存备注",
+                      "fill": "$surface.primary",
+                      "fontFamily": "Noto Sans SC"
                     }
                   }
                 }

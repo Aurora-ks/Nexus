@@ -16,6 +16,13 @@ class InMemoryWuwaAccountStore : WuwaAccountStore {
         return saved
     }
 
+    override suspend fun updateRemark(accountId: Long, nickname: String?): WuwaAccount? {
+        val account = accounts[accountId] ?: return null
+        val updated = account.copy(nickname = nickname)
+        accounts[accountId] = updated
+        return updated
+    }
+
     override suspend fun getAccounts(): List<WuwaAccount> = accounts.values.toList()
 
     override suspend fun delete(accountId: Long) {

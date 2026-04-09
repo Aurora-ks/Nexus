@@ -64,6 +64,16 @@ class WuwaRepositoryImpl(
         return OperationResult.Success(savedAccount)
     }
 
+    override suspend fun updateAccountRemark(
+        accountId: Long,
+        nickname: String?,
+    ): OperationResult<WuwaAccount> {
+        val normalizedNickname = nickname?.trim()?.takeIf { it.isNotEmpty() }
+        val updatedAccount = accountStore.updateRemark(accountId, normalizedNickname)
+            ?: return OperationResult.Failure(AppError.UnknownError("未找到对应账号"))
+        return OperationResult.Success(updatedAccount)
+    }
+
     override suspend fun deleteAccount(accountId: Long): OperationResult<Unit> {
         accountStore.delete(accountId)
         tokenStore.delete(accountId)
@@ -81,6 +91,13 @@ class WuwaRepositoryImpl(
 
     override suspend fun bindWuwaAccount(token: String, nickname: String?): OperationResult<WuwaAccount> {
         return bindAccount(token, nickname)
+    }
+
+    override suspend fun updateWuwaAccountRemark(
+        accountId: Long,
+        nickname: String?,
+    ): OperationResult<WuwaAccount> {
+        return updateAccountRemark(accountId, nickname)
     }
 
     override suspend fun deleteWuwaAccount(accountId: Long): OperationResult<Unit> {
