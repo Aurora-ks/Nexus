@@ -25,6 +25,5 @@ data class WuwaRoleDto(
     val roleName: String,
     val serverId: String,
     val serverName: String,
-    val userId: String,
-    val isDefault: Boolean = false,
+    val userId: String, // 库街区userID
 )

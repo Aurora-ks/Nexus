@@ -15,10 +15,13 @@ object NetworkModule {
         explicitNulls = false
     }
 
+    private val cookieJar = InMemoryCookieJar()
+
     private val okHttpClient = OkHttpClient.Builder()
+        .cookieJar(cookieJar)
         .apply {
             if (BuildConfig.DEBUG) {
-                addInterceptor(DebugHttpLoggingInterceptor())
+                addNetworkInterceptor(DebugHttpLoggingInterceptor())
             }
         }
         .build()
