@@ -20,7 +20,7 @@ object AppGraph {
         if (::headerProvider.isInitialized) return
         val deviceIdentityStore = SharedPreferencesDeviceIdentityStore(application)
         val ipAddressProvider = IpAddressProvider()
-        headerProvider = KuroHeaderProvider(deviceIdentityStore, ipAddressProvider)
+        headerProvider = KuroHeaderProvider(application, deviceIdentityStore, ipAddressProvider)
     }
 
     val repository: WuwaRepositoryImpl by lazy {

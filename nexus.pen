@@ -60,7 +60,7 @@
                   "name": "overviewLabel",
                   "fill": "$surface.primary",
                   "content": "概览",
-                  "fontFamily": "NotoSansSC",
+                  "fontFamily": "Noto Sans SC",
                   "fontSize": 10,
                   "fontWeight": "500"
                 }
@@ -94,7 +94,7 @@
                   "name": "checkinLabel",
                   "fill": "$foreground.muted",
                   "content": "签到",
-                  "fontFamily": "NotoSansSC",
+                  "fontFamily": "Noto Sans SC",
                   "fontSize": 10,
                   "fontWeight": "500"
                 }
@@ -128,7 +128,7 @@
                   "name": "accountLabel",
                   "fill": "$foreground.muted",
                   "content": "账号",
-                  "fontFamily": "NotoSansSC",
+                  "fontFamily": "Noto Sans SC",
                   "fontSize": 10,
                   "fontWeight": "500"
                 }
@@ -170,7 +170,7 @@
           "name": "btnText",
           "fill": "$surface.primary",
           "content": "手动同步",
-          "fontFamily": "NotoSansSC",
+          "fontFamily": "Noto Sans SC",
           "fontSize": 14,
           "fontWeight": "500"
         }
@@ -208,7 +208,7 @@
           "name": "secText",
           "fill": "$foreground.primary",
           "content": "立即签到",
-          "fontFamily": "NotoSansSC",
+          "fontFamily": "Noto Sans SC",
           "fontSize": 14,
           "fontWeight": "500"
         }
@@ -235,7 +235,7 @@
           "name": "chipWarningText",
           "fill": "#E65100",
           "content": "未签到",
-          "fontFamily": "NotoSansSC",
+          "fontFamily": "Noto Sans SC",
           "fontSize": 12,
           "fontWeight": "500"
         }
@@ -262,7 +262,7 @@
           "name": "chipErrorText",
           "fill": "#C62828",
           "content": "Token失效",
-          "fontFamily": "NotoSansSC",
+          "fontFamily": "Noto Sans SC",
           "fontSize": 12,
           "fontWeight": "500"
         }
@@ -316,7 +316,7 @@
                   "name": "charName",
                   "fill": "$foreground.primary",
                   "content": "角色名称",
-                  "fontFamily": "NotoSansSC",
+                  "fontFamily": "Noto Sans SC",
                   "fontSize": 16,
                   "fontWeight": "600"
                 },
@@ -326,7 +326,7 @@
                   "name": "serverName",
                   "fill": "$foreground.muted",
                   "content": "区服名称",
-                  "fontFamily": "NotoSansSC",
+                  "fontFamily": "Noto Sans SC",
                   "fontSize": 12,
                   "fontWeight": "normal"
                 }
@@ -384,7 +384,7 @@
               "name": "staminaText",
               "fill": "$foreground.secondary",
               "content": "结晶波片 207/240",
-              "fontFamily": "NotoSansSC",
+              "fontFamily": "Noto Sans SC",
               "fontSize": 14,
               "fontWeight": "normal"
             }
@@ -404,7 +404,7 @@
               "name": "weeklyTitle",
               "fill": "$foreground.muted",
               "content": "周常进度",
-              "fontFamily": "NotoSansSC",
+              "fontFamily": "Noto Sans SC",
               "fontSize": 12,
               "fontWeight": "normal",
               "fontStyle": "italic"
@@ -422,7 +422,7 @@
                   "name": "weeklyItem1",
                   "fill": "$foreground.secondary",
                   "content": "周本 0/3",
-                  "fontFamily": "NotoSansSC",
+                  "fontFamily": "Noto Sans SC",
                   "fontSize": 12,
                   "fontWeight": "normal"
                 },
@@ -432,7 +432,7 @@
                   "name": "weeklyItem2",
                   "fill": "$foreground.secondary",
                   "content": "危行 0/7",
-                  "fontFamily": "NotoSansSC",
+                  "fontFamily": "Noto Sans SC",
                   "fontSize": 12,
                   "fontWeight": "normal"
                 },
@@ -442,7 +442,7 @@
                   "name": "weeklyItem3",
                   "fill": "$foreground.secondary",
                   "content": "深塔 -",
-                  "fontFamily": "NotoSansSC",
+                  "fontFamily": "Noto Sans SC",
                   "fontSize": 12,
                   "fontWeight": "normal"
                 }
@@ -456,7 +456,7 @@
           "name": "updateTime",
           "fill": "$foreground.muted",
           "content": "更新于 10分钟前",
-          "fontFamily": "NotoSansSC",
+          "fontFamily": "Noto Sans SC",
           "fontSize": 11,
           "fontWeight": "normal",
           "fontStyle": "italic"
@@ -480,7 +480,7 @@
           "name": "inputLabel",
           "fill": "$foreground.secondary",
           "content": "输入标签",
-          "fontFamily": "NotoSansSC",
+          "fontFamily": "Noto Sans SC",
           "fontSize": 12,
           "fontWeight": "500"
         },
@@ -501,7 +501,7 @@
               "name": "inputText",
               "fill": "$foreground.muted",
               "content": "输入内容...",
-              "fontFamily": "NotoSansSC",
+              "fontFamily": "Noto Sans SC",
               "fontSize": 14,
               "fontWeight": "normal"
             }
@@ -546,7 +546,7 @@
           "name": "emptyTitle",
           "fill": "$foreground.primary",
           "content": "暂无内容",
-          "fontFamily": "NotoSansSC",
+          "fontFamily": "Noto Sans SC",
           "fontSize": 16,
           "fontWeight": "normal"
         },
@@ -557,7 +557,7 @@
           "fill": "$foreground.muted",
           "content": "完成操作后会显示相关信息",
           "textAlign": "center",
-          "fontFamily": "NotoSansSC",
+          "fontFamily": "Noto Sans SC",
           "fontSize": 14,
           "fontWeight": "normal"
         }
@@ -608,7 +608,7 @@
               "name": "pageTitle",
               "fill": "$foreground.primary",
               "content": "签到中心",
-              "fontFamily": "NotoSansSC",
+              "fontFamily": "Noto Sans SC",
               "fontSize": 28,
               "fontWeight": "600"
             },
@@ -631,7 +631,7 @@
                   "content": "一键签到",
                   "x": 44,
                   "y": 12,
-                  "fontFamily": "NotoSansSC"
+                  "fontFamily": "Noto Sans SC"
                 }
               }
             },
@@ -652,13 +652,13 @@
                   "content": "暂无签到记录",
                   "x": 115.5,
                   "y": 106.5,
-                  "fontFamily": "NotoSansSC"
+                  "fontFamily": "Noto Sans SC"
                 },
                 "XpUPA": {
                   "content": "后续会展示每个账号的签到结果与奖励信息",
                   "x": 31,
                   "y": 127.5,
-                  "fontFamily": "NotoSansSC",
+                  "fontFamily": "Noto Sans SC",
                   "enabled": false
                 }
               }
@@ -682,7 +682,7 @@
                   "name": "chipSuccessText",
                   "fill": "#2E7D32",
                   "content": "已签到",
-                  "fontFamily": "NotoSansSC",
+                  "fontFamily": "Noto Sans SC",
                   "fontSize": 12,
                   "fontWeight": "500"
                 }
@@ -800,7 +800,7 @@
               "name": "pageTitle2",
               "fill": "$foreground.primary",
               "content": "签到中心",
-              "fontFamily": "NotoSansSC",
+              "fontFamily": "Noto Sans SC",
               "fontSize": 28,
               "fontWeight": "600"
             },
@@ -831,7 +831,7 @@
                       "content": "一键签到",
                       "x": 44,
                       "y": 12,
-                      "fontFamily": "NotoSansSC"
+                      "fontFamily": "Noto Sans SC"
                     }
                   }
                 }
@@ -884,7 +884,7 @@
                           "name": "resultChar1",
                           "fill": "$foreground.primary",
                           "content": "角色A - 概观区",
-                          "fontFamily": "NotoSansSC",
+                          "fontFamily": "Noto Sans SC",
                           "fontSize": 14,
                           "fontWeight": "500"
                         },
@@ -894,7 +894,7 @@
                           "name": "resultStatus1",
                           "fill": "#2E7D32",
                           "content": "已签到",
-                          "fontFamily": "NotoSansSC",
+                          "fontFamily": "Noto Sans SC",
                           "fontSize": 12,
                           "fontWeight": "normal"
                         }
@@ -906,7 +906,7 @@
                       "name": "resultReward1",
                       "fill": "$foreground.secondary",
                       "content": "奖励：60星声 + 10000金币",
-                      "fontFamily": "NotoSansSC",
+                      "fontFamily": "Noto Sans SC",
                       "fontSize": 13,
                       "fontWeight": "normal"
                     },
@@ -916,7 +916,7 @@
                       "name": "resultTime1",
                       "fill": "$foreground.muted",
                       "content": "签到于 09:30",
-                      "fontFamily": "NotoSansSC",
+                      "fontFamily": "Noto Sans SC",
                       "fontSize": 11,
                       "fontWeight": "normal",
                       "fontStyle": "italic"
@@ -962,7 +962,7 @@
                           "name": "resultChar2",
                           "fill": "$foreground.primary",
                           "content": "角色B - 日区",
-                          "fontFamily": "NotoSansSC",
+                          "fontFamily": "Noto Sans SC",
                           "fontSize": 14,
                           "fontWeight": "500"
                         },
@@ -972,7 +972,7 @@
                           "name": "resultStatus2",
                           "fill": "#E65100",
                           "content": "今日已签到",
-                          "fontFamily": "NotoSansSC",
+                          "fontFamily": "Noto Sans SC",
                           "fontSize": 12,
                           "fontWeight": "normal"
                         }
@@ -984,7 +984,7 @@
                       "name": "resultReward2",
                       "fill": "$foreground.secondary",
                       "content": "无新奖励",
-                      "fontFamily": "NotoSansSC",
+                      "fontFamily": "Noto Sans SC",
                       "fontSize": 13,
                       "fontWeight": "normal"
                     },
@@ -994,7 +994,7 @@
                       "name": "resultTime2",
                       "fill": "$foreground.muted",
                       "content": "最后签到：昨日 08:15",
-                      "fontFamily": "NotoSansSC",
+                      "fontFamily": "Noto Sans SC",
                       "fontSize": 11,
                       "fontWeight": "normal",
                       "fontStyle": "italic"
@@ -1040,7 +1040,7 @@
                           "name": "resultChar3",
                           "fill": "$foreground.primary",
                           "content": "角色C - 概观区",
-                          "fontFamily": "NotoSansSC",
+                          "fontFamily": "Noto Sans SC",
                           "fontSize": 14,
                           "fontWeight": "500"
                         },
@@ -1050,7 +1050,7 @@
                           "name": "resultStatus3",
                           "fill": "#C62828",
                           "content": "Token失效",
-                          "fontFamily": "NotoSansSC",
+                          "fontFamily": "Noto Sans SC",
                           "fontSize": 12,
                           "fontWeight": "normal"
                         }
@@ -1062,7 +1062,7 @@
                       "name": "resultMsg3",
                       "fill": "$foreground.secondary",
                       "content": "请重新绑定账号以继续签到",
-                      "fontFamily": "NotoSansSC",
+                      "fontFamily": "Noto Sans SC",
                       "fontSize": 13,
                       "fontWeight": "normal"
                     },
@@ -1095,7 +1095,7 @@
                           "name": "retryText3",
                           "fill": "$accent.primary",
                           "content": "重新绑定",
-                          "fontFamily": "NotoSansSC",
+                          "fontFamily": "Noto Sans SC",
                           "fontSize": 12,
                           "fontWeight": "500"
                         }
@@ -2005,7 +2005,7 @@
               "fill": "$foreground.secondary",
               "textGrowth": "fixed-width",
               "width": "fill_container",
-              "content": "此操作无法撤销，相关数据将被清除。",
+              "content": "此操作无法撤销，有相关数据将被清除。",
               "textAlign": "center",
               "fontFamily": "Noto Sans SC",
               "fontSize": 14,

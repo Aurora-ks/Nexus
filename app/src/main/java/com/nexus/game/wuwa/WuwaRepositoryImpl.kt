@@ -114,7 +114,7 @@ class WuwaRepositoryImpl(
     ): DashboardCardModel? {
         val response = runCatching {
             widgetApi.getWidgetData(
-                headers = headerProvider.nativeHeaders(token),
+                headers = headerProvider.webHeaders(token),
                 gameId = GameType.WUWA.gameId,
                 roleId = account.roleId,
                 serverId = account.serverId,

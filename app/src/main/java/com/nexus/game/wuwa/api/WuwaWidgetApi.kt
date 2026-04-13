@@ -11,6 +11,8 @@ interface WuwaWidgetApi {
     @POST("aki/widget/getData")
     suspend fun getWidgetData(
         @HeaderMap headers: Map<String, String>,
+        @Field("type") type: Int = 2,
+        @Field("sizeType") sizeType: Int = 2,
         @Field("gameId") gameId: Int,
         @Field("roleId") roleId: String,
         @Field("serverId") serverId: String,
