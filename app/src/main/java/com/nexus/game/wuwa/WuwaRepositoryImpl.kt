@@ -4,17 +4,22 @@ import com.nexus.core.model.AppError
 import com.nexus.core.model.GameType
 import com.nexus.core.model.OperationResult
 import com.nexus.core.network.KuroHeaderProvider
+import com.nexus.core.storage.secure.BoxAccessTokenKey
 import com.nexus.core.storage.secure.TokenStore
 import com.nexus.feature.account.AccountRepository
 import com.nexus.feature.dashboard.DashboardRepository
+import com.nexus.game.wuwa.api.WuwaAkiBoxApi
 import com.nexus.game.wuwa.api.WuwaRoleApi
 import com.nexus.game.wuwa.api.WuwaWidgetApi
 import com.nexus.game.wuwa.model.DashboardCardModel
 import com.nexus.game.wuwa.model.WuwaAccount
+import com.nexus.game.wuwa.model.WuwaRefreshDataEnvelopeDto
+import com.nexus.game.wuwa.model.WuwaRequestTokenEnvelopeDto
 
 class WuwaRepositoryImpl(
     private val roleApi: WuwaRoleApi,
     private val widgetApi: WuwaWidgetApi,
+    private val akiBoxApi: WuwaAkiBoxApi,
     private val headerProvider: KuroHeaderProvider,
     private val accountStore: WuwaAccountStore,
     private val snapshotStore: WuwaSnapshotStore,
@@ -50,6 +55,7 @@ class WuwaRepositoryImpl(
 
         val savedAccount = accountStore.save(
             WuwaAccount(
+                gameId = wuwaRole.gameId,
                 userId = wuwaRole.userId,
                 roleId = wuwaRole.roleId,
                 roleName = wuwaRole.roleName,
@@ -58,9 +64,9 @@ class WuwaRepositoryImpl(
                 nickname = nickname,
             ),
         )
-        tokenStore.save(savedAccount.id, token)
-
+        tokenStore.saveBbsToken(savedAccount.id, token)
         fetchDashboardCard(savedAccount, token)?.let { snapshotStore.save(savedAccount.id, it) }
+
         return OperationResult.Success(savedAccount)
     }
 
@@ -75,15 +81,18 @@ class WuwaRepositoryImpl(
     }
 
     override suspend fun deleteAccount(accountId: Long): OperationResult<Unit> {
+        accountStore.getAccount(accountId)?.let { account ->
+            tokenStore.deleteBoxAccessToken(account.toBoxAccessTokenKey())
+        }
+        tokenStore.deleteBbsToken(accountId)
         accountStore.delete(accountId)
-        tokenStore.delete(accountId)
         snapshotStore.delete(accountId)
         return OperationResult.Success(Unit)
     }
 
     override suspend fun syncAccounts(): OperationResult<List<DashboardCardModel>> {
         val cards = accountStore.getAccounts().mapNotNull { account ->
-            val token = tokenStore.get(account.id) ?: return@mapNotNull null
+            val token = tokenStore.getBbsToken(account.id) ?: return@mapNotNull null
             fetchDashboardCard(account, token)?.also { snapshotStore.save(account.id, it) }
         }
         return OperationResult.Success(cards)
@@ -112,10 +121,15 @@ class WuwaRepositoryImpl(
         account: WuwaAccount,
         token: String,
     ): DashboardCardModel? {
+        when (refreshDashboardData(account, token)) {
+            is OperationResult.Success -> Unit
+            is OperationResult.Failure -> return null
+        }
+
         val response = runCatching {
             widgetApi.getWidgetData(
                 headers = headerProvider.webHeaders(token),
-                gameId = GameType.WUWA.gameId,
+                gameId = account.gameId,
                 roleId = account.roleId,
                 serverId = account.serverId,
             )
@@ -124,5 +138,117 @@ class WuwaRepositoryImpl(
         if (!response.success) return null
         val data = response.data ?: return null
         return WuwaMappers.toDashboardCard(data)
+    }
+
+    private suspend fun refreshDashboardData(
+        account: WuwaAccount,
+        token: String,
+    ): OperationResult<Unit> {
+        val BoxAccessTokenKey = account.toBoxAccessTokenKey()
+        val cachedBoxAccessToken = tokenStore.getBoxAccessToken(BoxAccessTokenKey)
+        val BoxAccessToken = cachedBoxAccessToken ?: when (val result = requestBoxAccessToken(account, token)) {
+            is OperationResult.Success -> result.value
+            is OperationResult.Failure -> return result
+        }
+
+        return when (val refreshResult = submitRefreshData(account, BoxAccessToken)) {
+            is OperationResult.Success -> refreshResult
+            is OperationResult.Failure -> {
+                if (cachedBoxAccessToken != null && refreshResult.error is AppError.AuthError) {
+                    tokenStore.deleteBoxAccessToken(BoxAccessTokenKey)
+                    when (val renewed = requestBoxAccessToken(account, token)) {
+                        is OperationResult.Success -> submitRefreshData(account, renewed.value)
+                        is OperationResult.Failure -> renewed
+                    }
+                } else {
+                    refreshResult
+                }
+            }
+        }
+    }
+
+    private suspend fun requestBoxAccessToken(
+        account: WuwaAccount,
+        token: String,
+    ): OperationResult<String> {
+        val response = runCatching {
+            akiBoxApi.requestToken(
+                headers = headerProvider.requestTokenHeaders(token),
+                roleId = account.roleId,
+                serverId = account.serverId,
+                userId = account.userId,
+            )
+        }.getOrElse {
+            return OperationResult.Failure(AppError.UnknownError(it.message ?: "获取 b-at 失败"))
+        }
+
+        if (!response.success) {
+            return OperationResult.Failure(response.toAppError())
+        }
+
+        val payload = response.data
+            ?: return OperationResult.Failure(AppError.ApiContractError("获取 b-at 响应缺少 data"))
+        val boxAccessToken = runCatching { WuwaBoxAccessTokenParser.parse(payload) }
+            .getOrElse {
+                return OperationResult.Failure(AppError.ParseError(it.message ?: "解析 b-at 失败"))
+            }
+
+        tokenStore.saveBoxAccessToken(account.toBoxAccessTokenKey(), boxAccessToken)
+        return OperationResult.Success(boxAccessToken)
+    }
+
+    private suspend fun submitRefreshData(
+        account: WuwaAccount,
+        boxAccessToken: String,
+    ): OperationResult<Unit> {
+        val response = runCatching {
+            akiBoxApi.refreshData(
+                headers = headerProvider.akiBoxHeaders(boxAccessToken),
+                gameId = account.gameId,
+                roleId = account.roleId,
+                serverId = account.serverId,
+            )
+        }.getOrElse {
+            return OperationResult.Failure(AppError.UnknownError(it.message ?: "刷新鸣潮数据失败"))
+        }
+
+        if (!response.success || response.data != true) {
+            return OperationResult.Failure(response.toAppError(defaultMessage = "刷新鸣潮数据失败"))
+        }
+        return OperationResult.Success(Unit)
+    }
+
+    private fun WuwaAccount.toBoxAccessTokenKey(): BoxAccessTokenKey = BoxAccessTokenKey(
+        userId = userId,
+        roleId = roleId,
+        gameId = gameId,
+    )
+
+    private fun WuwaRequestTokenEnvelopeDto.toAppError(): AppError {
+        return mapEnvelopeError(code = code, message = msg, defaultMessage = "获取 b-at 失败")
+    }
+
+    private fun WuwaRefreshDataEnvelopeDto.toAppError(defaultMessage: String): AppError {
+        return mapEnvelopeError(code = code, message = msg, defaultMessage = defaultMessage)
+    }
+
+    private fun mapEnvelopeError(
+        code: Int,
+        message: String,
+        defaultMessage: String,
+    ): AppError {
+        val normalizedMessage = message.ifBlank { defaultMessage }
+        if (code == 401 || code == 403 || normalizedMessage.containsAuthHint()) {
+            return AppError.AuthError(normalizedMessage)
+        }
+        return AppError.UnknownError(normalizedMessage)
+    }
+
+    private fun String.containsAuthHint(): Boolean {
+        return contains("token", ignoreCase = true) ||
+                contains("鉴权") ||
+                contains("认证") ||
+                contains("登录") ||
+                contains("失效")
     }
 }

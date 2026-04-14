@@ -2,14 +2,7 @@ package com.nexus.game.wuwa.model
 
 import kotlinx.serialization.Serializable
 
-@Serializable
-data class WuwaCheckInInitEnvelopeDto(
-    val code: Int,
-    val msg: String,
-    val success: Boolean,
-    val traceId: String? = null,
-    val data: WuwaCheckInInitDto? = null,
-)
+typealias WuwaCheckInInitEnvelopeDto = WuwaEnvelopeDto<WuwaCheckInInitDto>
 
 @Serializable
 data class WuwaCheckInInitDto(
@@ -18,14 +11,7 @@ data class WuwaCheckInInitDto(
     val nowServerTimes: String? = null,
 )
 
-@Serializable
-data class WuwaCheckInEnvelopeDto(
-    val code: Int,
-    val msg: String,
-    val success: Boolean,
-    val traceId: String? = null,
-    val data: WuwaCheckInRewardDataDto? = null,
-)
+typealias WuwaCheckInEnvelopeDto = WuwaEnvelopeDto<WuwaCheckInRewardDataDto>
 
 @Serializable
 data class WuwaCheckInRewardDataDto(

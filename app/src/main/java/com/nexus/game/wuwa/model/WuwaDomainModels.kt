@@ -1,7 +1,10 @@
 package com.nexus.game.wuwa.model
 
+import com.nexus.core.model.GameType
+
 data class WuwaAccount(
     val id: Long = 0,
+    val gameId: Int = GameType.WUWA.gameId,
     val userId: String,
     val roleId: String,
     val roleName: String,

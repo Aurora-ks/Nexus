@@ -19,6 +19,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -29,6 +30,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.nexus.app.AppGraph
 import com.nexus.core.model.OperationResult
 import com.nexus.game.wuwa.model.DashboardCardModel
@@ -51,6 +55,7 @@ fun DashboardScreen(innerPadding: PaddingValues) {
     val repository = remember { AppGraph.repository }
     val syncUseCase = remember { SyncWuwaAccountsUseCase(repository) }
     val scope = rememberCoroutineScope()
+    val lifecycleOwner = LocalLifecycleOwner.current
 
     var accounts by remember { mutableStateOf(emptyList<WuwaAccount>()) }
     var cards by remember { mutableStateOf(emptyList<DashboardCardModel>()) }
@@ -62,12 +67,31 @@ fun DashboardScreen(innerPadding: PaddingValues) {
         cards = repository.getCachedDashboardCards()
     }
 
-    LaunchedEffect(Unit) {
-        reloadLocalState()
+    fun updateStatusMessage() {
         statusMessage = when {
             accounts.isEmpty() -> "还没有接入账号，请先去账号页完成绑定。"
             cards.isEmpty() -> "账号已绑定，点击刷新概览后会拉取最新摘要。"
             else -> "已载入最近一次同步快照。"
+        }
+    }
+
+    LaunchedEffect(Unit) {
+        reloadLocalState()
+        updateStatusMessage()
+    }
+
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_RESUME) {
+                scope.launch {
+                    reloadLocalState()
+                    updateStatusMessage()
+                }
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
         }
     }
 

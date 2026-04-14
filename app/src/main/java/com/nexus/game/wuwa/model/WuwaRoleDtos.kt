@@ -3,14 +3,7 @@ package com.nexus.game.wuwa.model
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
-@Serializable
-data class WuwaRoleEnvelopeDto(
-    val code: Int,
-    val msg: String,
-    val success: Boolean,
-    val traceId: String? = null,
-    val data: WuwaRoleDataDto? = null,
-)
+typealias WuwaRoleEnvelopeDto = WuwaEnvelopeDto<WuwaRoleDataDto>
 
 @Serializable
 data class WuwaRoleDataDto(

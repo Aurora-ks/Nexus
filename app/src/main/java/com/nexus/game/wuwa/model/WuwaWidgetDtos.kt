@@ -2,13 +2,7 @@ package com.nexus.game.wuwa.model
 
 import kotlinx.serialization.Serializable
 
-@Serializable
-data class WuwaWidgetEnvelopeDto(
-    val code: Int,
-    val msg: String,
-    val success: Boolean,
-    val data: WuwaWidgetDataDto? = null,
-)
+typealias WuwaWidgetEnvelopeDto = WuwaEnvelopeDto<WuwaWidgetDataDto>
 
 @Serializable
 data class WuwaWidgetDataDto(

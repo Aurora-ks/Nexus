@@ -1,26 +1,40 @@
 package com.nexus.app
 
 import android.app.Application
+import androidx.room.Room
 import com.nexus.core.network.IpAddressProvider
 import com.nexus.core.network.KuroHeaderProvider
 import com.nexus.core.network.NetworkModule
+import com.nexus.core.storage.db.NexusDatabase
 import com.nexus.core.storage.preferences.SharedPreferencesDeviceIdentityStore
-import com.nexus.core.storage.secure.InMemoryTokenStore
-import com.nexus.game.wuwa.InMemoryWuwaAccountStore
+import com.nexus.core.storage.secure.EncryptedTokenStore
+import com.nexus.core.storage.secure.TokenStore
 import com.nexus.game.wuwa.InMemoryWuwaSnapshotStore
+import com.nexus.game.wuwa.RoomWuwaAccountStore
 import com.nexus.game.wuwa.WuwaRepositoryImpl
+import com.nexus.game.wuwa.WuwaAccountStore
 
 object AppGraph {
-    private val accountStore = InMemoryWuwaAccountStore()
+    private const val DATABASE_NAME = "nexus.db"
+
     private val snapshotStore = InMemoryWuwaSnapshotStore()
-    private val tokenStore = InMemoryTokenStore()
     private lateinit var headerProvider: KuroHeaderProvider
+    private lateinit var tokenStore: TokenStore
+    private lateinit var database: NexusDatabase
+    private lateinit var accountStore: WuwaAccountStore
 
     fun initialize(application: Application) {
         if (::headerProvider.isInitialized) return
         val deviceIdentityStore = SharedPreferencesDeviceIdentityStore(application)
         val ipAddressProvider = IpAddressProvider()
         headerProvider = KuroHeaderProvider(application, deviceIdentityStore, ipAddressProvider)
+        tokenStore = EncryptedTokenStore(application)
+        database = Room.databaseBuilder(
+            application,
+            NexusDatabase::class.java,
+            DATABASE_NAME,
+        ).build()
+        accountStore = RoomWuwaAccountStore(database.accountDao())
     }
 
     val repository: WuwaRepositoryImpl by lazy {
@@ -30,6 +44,7 @@ object AppGraph {
         WuwaRepositoryImpl(
             roleApi = NetworkModule.wuwaRoleApi,
             widgetApi = NetworkModule.wuwaWidgetApi,
+            akiBoxApi = NetworkModule.wuwaAkiBoxApi,
             headerProvider = headerProvider,
             accountStore = accountStore,
             snapshotStore = snapshotStore,

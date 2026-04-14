@@ -31,22 +31,36 @@ class KuroHeaderProvider(
     }
 
     suspend fun webHeaders(token: String): Map<String, String> {
+        return webBaseHeaders() + ("token" to token)
+    }
+
+    suspend fun requestTokenHeaders(token: String): Map<String, String> = webHeaders(token)
+
+    suspend fun akiBoxHeaders(BoxAccessToken: String): Map<String, String> {
+        return webBaseHeaders() + ("b-at" to BoxAccessToken)
+    }
+
+    private suspend fun webBaseHeaders(): Map<String, String> {
         val identity = deviceIdentityStore.getOrCreate()
         val ipAddress = ipAddressProvider.getCurrentIp()
+        val userAgent = "${WebSettings.getDefaultUserAgent(appContext)} $WebKuroSuffix"
         return mapOf(
-            "User-Agent" to "${WebSettings.getDefaultUserAgent(appContext)} Kuro/2.11.0 KuroGameBox/2.11.0",
+            "User-Agent" to userAgent,
             "X-Requested-With" to "com.kurogame.kjq",
             "source" to "android",
-            "token" to token,
             "ip" to ipAddress,
-            "devCode" to identity.devCode,
+            "devCode" to "$ipAddress, $userAgent",
+            "did" to identity.did,
             "Origin" to "https://web-static.kurobbs.com",
             "Sec-Fetch-Site" to "same-site",
             "Sec-Fetch-Mode" to "cors",
             "Sec-Fetch-Dest" to "empty",
             "sec-ch-ua-mobile" to "?1",
             "sec-ch-ua-platform" to "Android",
-
         )
+    }
+
+    private companion object {
+        const val WebKuroSuffix = "Kuro/2.11.0 KuroGameBox/2.11.0"
     }
 }
