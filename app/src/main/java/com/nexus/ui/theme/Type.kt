@@ -37,7 +37,7 @@ val NexusTypography = Typography(
         lineHeight = 20.sp,
     ),
     bodyMedium = TextStyle(
-        fontFamily = FontFamily.Serif,
+        fontFamily = FontFamily.SansSerif,
         fontSize = 11.sp,
         lineHeight = 16.sp,
     ),
