@@ -2125,6 +2125,70 @@
                   "fontWeight": "600"
                 },
                 {
+                  "type": "frame",
+                  "id": "qjZnf",
+                  "name": "gameField",
+                  "width": 296,
+                  "layout": "vertical",
+                  "gap": 8,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "SWK1T",
+                      "fill": "$foreground.secondary",
+                      "content": "游戏",
+                      "fontFamily": "Noto Sans SC",
+                      "fontSize": 13,
+                      "fontWeight": "500"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "kRJF9",
+                      "width": 296,
+                      "height": 44,
+                      "fill": "$surface.input",
+                      "cornerRadius": 12,
+                      "gap": 8,
+                      "padding": [
+                        0,
+                        12
+                      ],
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "icon_font",
+                          "id": "AtqBH",
+                          "width": 16,
+                          "height": 16,
+                          "iconFontName": "gamepad-2",
+                          "iconFontFamily": "lucide",
+                          "fill": "$foreground.muted"
+                        },
+                        {
+                          "type": "text",
+                          "id": "EdlM4",
+                          "fill": "$foreground.primary",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "鸣潮",
+                          "fontFamily": "Noto Sans SC",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "icon_font",
+                          "id": "OmkvZ",
+                          "width": 16,
+                          "height": 16,
+                          "iconFontName": "chevron-down",
+                          "iconFontFamily": "lucide",
+                          "fill": "$foreground.muted"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
                   "id": "dkJq6",
                   "type": "ref",
                   "ref": "MeY0h",
@@ -2132,7 +2196,7 @@
                   "name": "inputB",
                   "height": "fit_content",
                   "x": 16,
-                  "y": 51,
+                  "y": 134,
                   "flipX": false,
                   "flipY": false,
                   "descendants": {
@@ -2161,7 +2225,7 @@
                   "width": "fill_container",
                   "name": "inputA",
                   "x": 16,
-                  "y": 132,
+                  "y": 215,
                   "descendants": {
                     "suxoG": {
                       "content": "账号备注",

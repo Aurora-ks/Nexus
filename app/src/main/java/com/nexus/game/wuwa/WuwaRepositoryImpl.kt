@@ -34,7 +34,7 @@ class WuwaRepositoryImpl(
             is OperationResult.Success -> parsed.value
             is OperationResult.Failure -> return parsed
         }
-
+    
         val roleResponse = runCatching {
             roleApi.findUserDefaultRole(
                 headers = headerProvider.nativeHeaders(token),

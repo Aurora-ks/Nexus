@@ -21,6 +21,7 @@ import androidx.compose.material.icons.outlined.Check
 import androidx.compose.material.icons.outlined.DeleteOutline
 import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material.icons.outlined.PersonAddAlt1
+import androidx.compose.material.icons.outlined.SportsEsports
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -43,10 +44,13 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.nexus.app.AppGraph
 import com.nexus.core.model.AppError
+import com.nexus.core.model.GameType
 import com.nexus.core.model.OperationResult
 import com.nexus.game.wuwa.model.WuwaAccount
+import com.nexus.ui.components.NexusDropdownOption
 import com.nexus.ui.components.NexusDestructiveButton
 import com.nexus.ui.components.NexusEmptyStateCard
+import com.nexus.ui.components.NexusLabeledDropdownField
 import com.nexus.ui.components.NexusLabeledTextField
 import com.nexus.ui.components.NexusPage
 import com.nexus.ui.components.NexusPanel
@@ -72,9 +76,18 @@ fun AccountScreen(innerPadding: PaddingValues) {
     val updateAccountRemark = remember { UpdateWuwaAccountRemarkUseCase(repository) }
     val deleteAccount = remember { DeleteWuwaAccountUseCase(repository) }
     val scope = rememberCoroutineScope()
+    val supportedGames = remember {
+        listOf(
+            NexusDropdownOption(
+                value = GameType.WUWA.name,
+                label = "鸣潮",
+            ),
+        )
+    }
 
     var token by remember { mutableStateOf("") }
     var nickname by remember { mutableStateOf("") }
+    var selectedGame by remember { mutableStateOf(supportedGames.first()) }
     var isSubmitting by remember { mutableStateOf(false) }
     var isSavingRemark by remember { mutableStateOf(false) }
     var isDeleting by remember { mutableStateOf(false) }
@@ -142,6 +155,14 @@ fun AccountScreen(innerPadding: PaddingValues) {
                     style = MaterialTheme.typography.titleLarge,
                     color = TextPrimary,
                 )
+                NexusLabeledDropdownField(
+                    label = "游戏",
+                    selectedOption = selectedGame,
+                    options = supportedGames,
+                    onOptionSelected = { selectedGame = it },
+                    leadingIcon = Icons.Outlined.SportsEsports,
+                    modifier = Modifier.fillMaxWidth(),
+                )
                 NexusLabeledTextField(
                     label = "Token",
                     value = token,
@@ -161,11 +182,18 @@ fun AccountScreen(innerPadding: PaddingValues) {
                         if (isSubmitting) return@NexusPrimaryButton
                         scope.launch {
                             isSubmitting = true
-                            when (val result = bindAccount(token, nickname.ifBlank { null })) {
+                            when (val result = when (selectedGame.value) {
+                                GameType.WUWA.name -> bindAccount(token, nickname.ifBlank { null })
+                                else -> OperationResult.Failure(
+                                    AppError.UnknownError("当前暂不支持该游戏账号绑定"),
+                                )
+                            }) {
                                 is OperationResult.Success -> {
                                     reloadAccounts()
                                     token = ""
                                     nickname = ""
+                                    selectedGame = supportedGames.first()
+                                    statusMessage = ""
                                 }
                                 is OperationResult.Failure -> {
                                     statusMessage = result.error.toUserMessage()

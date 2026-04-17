@@ -15,20 +15,28 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.KeyboardArrowDown
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -49,6 +57,7 @@ import com.nexus.ui.theme.ErrorForeground
 import com.nexus.ui.theme.SuccessBackground
 import com.nexus.ui.theme.SuccessForeground
 import com.nexus.ui.theme.SurfaceCard
+import com.nexus.ui.theme.SurfaceDropdown
 import com.nexus.ui.theme.SurfaceInput
 import com.nexus.ui.theme.TextMuted
 import com.nexus.ui.theme.TextPrimary
@@ -66,6 +75,11 @@ data class NexusBottomBarItem(
     val route: String,
     val label: String,
     val icon: ImageVector,
+)
+
+data class NexusDropdownOption(
+    val value: String,
+    val label: String,
 )
 
 @Composable
@@ -328,6 +342,93 @@ fun NexusLabeledTextField(
                 }
             },
         )
+    }
+}
+
+@Composable
+fun NexusLabeledDropdownField(
+    label: String,
+    selectedOption: NexusDropdownOption,
+    options: List<NexusDropdownOption>,
+    onOptionSelected: (NexusDropdownOption) -> Unit,
+    modifier: Modifier = Modifier,
+    leadingIcon: ImageVector? = null,
+    enabled: Boolean = true,
+) {
+    var expanded by remember { mutableStateOf(false) }
+
+    Column(
+        modifier = modifier,
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+        Text(
+            text = label,
+            style = MaterialTheme.typography.labelSmall.copy(fontSize = androidx.compose.ui.unit.TextUnit.Unspecified),
+            color = TextSecondary,
+        )
+        Box(modifier = Modifier.fillMaxWidth()) {
+            Surface(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clip(RoundedCornerShape(12.dp))
+                    .clickable(enabled = enabled, onClick = { expanded = !expanded }),
+                shape = RoundedCornerShape(12.dp),
+                color = SurfaceDropdown,
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(44.dp)
+                        .padding(horizontal = 12.dp),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    if (leadingIcon != null) {
+                        Icon(
+                            imageVector = leadingIcon,
+                            contentDescription = null,
+                            modifier = Modifier.size(16.dp),
+                            tint = TextMuted.copy(alpha = if (enabled) 1f else 0.6f),
+                        )
+                    }
+                    Text(
+                        text = selectedOption.label,
+                        modifier = Modifier.weight(1f),
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = TextPrimary.copy(alpha = if (enabled) 1f else 0.6f),
+                    )
+                    Icon(
+                        imageVector = Icons.Outlined.KeyboardArrowDown,
+                        contentDescription = null,
+                        modifier = Modifier.size(16.dp),
+                        tint = TextMuted.copy(alpha = if (enabled) 1f else 0.6f),
+                    )
+                }
+            }
+
+            DropdownMenu(
+                expanded = expanded,
+                onDismissRequest = { expanded = false },
+                modifier = Modifier.widthIn(min = 220.dp),
+                containerColor = SurfaceCard,
+            ) {
+                options.forEach { option ->
+                    DropdownMenuItem(
+                        text = {
+                            Text(
+                                text = option.label,
+                                style = MaterialTheme.typography.bodyLarge,
+                                color = TextPrimary,
+                            )
+                        },
+                        onClick = {
+                            expanded = false
+                            onOptionSelected(option)
+                        },
+                    )
+                }
+            }
+        }
     }
 }
 
