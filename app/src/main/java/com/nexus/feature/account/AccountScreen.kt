@@ -37,6 +37,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -67,6 +69,8 @@ import com.nexus.ui.theme.SurfaceInput
 import com.nexus.ui.theme.TextMuted
 import com.nexus.ui.theme.TextPrimary
 import com.nexus.ui.theme.TextSecondary
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import kotlinx.coroutines.launch
 
 @Composable
@@ -103,6 +107,7 @@ fun AccountScreen(innerPadding: PaddingValues) {
 
     LaunchedEffect(Unit) {
         reloadAccounts()
+        accounts = repository.refreshAccountProfiles()
     }
 
     Column(
@@ -291,13 +296,10 @@ private fun BoundAccountRow(
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Surface(
+        AccountAvatar(
+            headPhotoUrl = account.headPhotoUrl,
             modifier = Modifier.size(40.dp),
-            shape = androidx.compose.foundation.shape.CircleShape,
-            color = SurfaceInput,
-        ) {
-            Spacer(modifier = Modifier.fillMaxSize())
-        }
+        )
         Column(
             modifier = Modifier.weight(1f),
             verticalArrangement = Arrangement.spacedBy(4.dp),
@@ -329,6 +331,36 @@ private fun BoundAccountRow(
             onClick = onEdit,
         )
     }
+}
+
+@Composable
+private fun AccountAvatar(
+    headPhotoUrl: String?,
+    modifier: Modifier = Modifier,
+) {
+    if (headPhotoUrl.isNullOrBlank()) {
+        Surface(
+            modifier = modifier,
+            shape = androidx.compose.foundation.shape.CircleShape,
+            color = SurfaceInput,
+        ) {
+            Spacer(modifier = Modifier.fillMaxSize())
+        }
+        return
+    }
+    val context = LocalContext.current
+
+    AsyncImage(
+        model = ImageRequest.Builder(context)
+            .data(headPhotoUrl)
+            .addHeader("User-Agent", "Kuro/2.11.0 KuroGameBox/2.11.0")
+            .addHeader("Referer", "https://web-static.kurobbs.com/")
+            .crossfade(true)
+            .build(),
+        contentDescription = null,
+        modifier = modifier.clip(androidx.compose.foundation.shape.CircleShape),
+        contentScale = ContentScale.Crop,
+    )
 }
 
 @Composable

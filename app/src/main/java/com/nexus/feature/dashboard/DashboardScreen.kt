@@ -44,6 +44,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -72,6 +73,7 @@ import com.nexus.ui.theme.TextMuted
 import com.nexus.ui.theme.TextPrimary
 import com.nexus.ui.theme.TextSecondary
 import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import kotlinx.coroutines.launch
 
 @Composable
@@ -86,8 +88,12 @@ fun DashboardScreen(innerPadding: PaddingValues) {
     var isRefreshing by remember { mutableStateOf(false) }
     var statusMessage by remember { mutableStateOf("点击刷新概览后展示最新摘要。") }
 
-    suspend fun reloadLocalState() {
-        accounts = repository.getBoundAccounts()
+    suspend fun reloadLocalState(refreshProfiles: Boolean = false) {
+        accounts = if (refreshProfiles) {
+            repository.refreshAccountProfiles()
+        } else {
+            repository.getBoundAccounts()
+        }
         cards = repository.getCachedDashboardCards()
     }
 
@@ -100,7 +106,7 @@ fun DashboardScreen(innerPadding: PaddingValues) {
     }
 
     LaunchedEffect(Unit) {
-        reloadLocalState()
+        reloadLocalState(refreshProfiles = true)
         updateStatusMessage()
     }
 
@@ -108,7 +114,7 @@ fun DashboardScreen(innerPadding: PaddingValues) {
         val observer = LifecycleEventObserver { _, event ->
             if (event == Lifecycle.Event.ON_RESUME) {
                 scope.launch {
-                    reloadLocalState()
+                    reloadLocalState(refreshProfiles = true)
                     updateStatusMessage()
                 }
             }
@@ -264,7 +270,10 @@ private fun WuwaCollapsedCard(
                 horizontalArrangement = Arrangement.spacedBy(12.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                Spacer(modifier = Modifier.size(36.dp))
+                AccountAvatar(
+                    headPhotoUrl = account.headPhotoUrl,
+                    modifier = Modifier.size(36.dp),
+                )
                 Column(
                     modifier = Modifier.weight(1f),
                     verticalArrangement = Arrangement.spacedBy(2.dp),
@@ -346,6 +355,36 @@ private fun WuwaCollapsedCard(
             }
         }
     }
+}
+
+@Composable
+private fun AccountAvatar(
+    headPhotoUrl: String?,
+    modifier: Modifier = Modifier,
+) {
+    if (headPhotoUrl.isNullOrBlank()) {
+        Surface(
+            modifier = modifier,
+            shape = androidx.compose.foundation.shape.CircleShape,
+            color = SurfaceInput,
+        ) {
+            Spacer(modifier = Modifier.fillMaxSize())
+        }
+        return
+    }
+    val context = LocalContext.current
+
+    AsyncImage(
+        model = ImageRequest.Builder(context)
+            .data(headPhotoUrl)
+            .addHeader("User-Agent", "Kuro/2.11.0 KuroGameBox/2.11.0")
+            .addHeader("Referer", "https://web-static.kurobbs.com/")
+            .crossfade(true)
+            .build(),
+        contentDescription = null,
+        modifier = modifier.clip(androidx.compose.foundation.shape.CircleShape),
+        contentScale = ContentScale.Crop,
+    )
 }
 
 @Composable

@@ -11,6 +11,7 @@ data class WuwaAccount(
     val serverId: String,
     val serverName: String,
     val nickname: String? = null,
+    val headPhotoUrl: String? = null,
 )
 
 data class DashboardCardModel(

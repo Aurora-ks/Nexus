@@ -33,7 +33,7 @@ object AppGraph {
             application,
             NexusDatabase::class.java,
             DATABASE_NAME,
-        ).build()
+        ).addMigrations(NexusDatabase.Migration1To2).build()
         accountStore = RoomWuwaAccountStore(database.accountDao())
     }
 

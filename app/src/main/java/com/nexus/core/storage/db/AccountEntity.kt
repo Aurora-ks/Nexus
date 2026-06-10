@@ -14,6 +14,7 @@ data class AccountEntity(
     @ColumnInfo(name = "role_name") val roleName: String,
     @ColumnInfo(name = "server_name") val serverName: String,
     @ColumnInfo(name = "local_nickname") val localNickname: String?,
+    @ColumnInfo(name = "head_photo_url") val headPhotoUrl: String?,
     @ColumnInfo(name = "status") val status: String,
     @ColumnInfo(name = "last_sync_at") val lastSyncAt: Long?,
     @ColumnInfo(name = "last_check_in_at") val lastCheckInAt: Long?,

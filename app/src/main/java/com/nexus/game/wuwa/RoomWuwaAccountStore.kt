@@ -28,6 +28,7 @@ class RoomWuwaAccountStore(
             roleName = account.roleName,
             serverName = account.serverName,
             localNickname = account.nickname ?: existing?.localNickname,
+            headPhotoUrl = account.headPhotoUrl ?: existing?.headPhotoUrl,
             status = existing?.status ?: STATUS_ACTIVE,
             lastSyncAt = existing?.lastSyncAt,
             lastCheckInAt = existing?.lastCheckInAt,
@@ -68,6 +69,7 @@ class RoomWuwaAccountStore(
             serverId = serverId,
             serverName = serverName,
             nickname = localNickname,
+            headPhotoUrl = headPhotoUrl,
         )
     }
 

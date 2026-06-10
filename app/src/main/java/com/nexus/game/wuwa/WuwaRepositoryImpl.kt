@@ -15,6 +15,11 @@ import com.nexus.game.wuwa.model.DashboardCardModel
 import com.nexus.game.wuwa.model.WuwaAccount
 import com.nexus.game.wuwa.model.WuwaRefreshDataEnvelopeDto
 import com.nexus.game.wuwa.model.WuwaRequestTokenEnvelopeDto
+import kotlinx.serialization.json.JsonArray
+import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.contentOrNull
+import kotlinx.serialization.json.jsonPrimitive
 
 class WuwaRepositoryImpl(
     private val roleApi: WuwaRoleApi,
@@ -28,6 +33,13 @@ class WuwaRepositoryImpl(
     suspend fun getBoundAccounts(): List<WuwaAccount> = accountStore.getAccounts()
 
     suspend fun getCachedDashboardCards(): List<DashboardCardModel> = snapshotStore.getCards()
+
+    suspend fun refreshAccountProfiles(): List<WuwaAccount> {
+        return accountStore.getAccounts().map { account ->
+            val token = tokenStore.getBbsToken(account.id) ?: return@map account
+            refreshHeadPhotoUrl(account, token)
+        }
+    }
 
     override suspend fun bindAccount(token: String, nickname: String?): OperationResult<WuwaAccount> {
         val userId = when (val parsed = TokenParser.parseUserId(token)) {
@@ -53,6 +65,8 @@ class WuwaRepositoryImpl(
             ?.firstOrNull { it.gameId == GameType.WUWA.gameId }
             ?: return OperationResult.Failure(AppError.ApiContractError("未找到鸣潮角色"))
 
+        val headPhotoUrl = findHeadPhotoUrl(token = token, userId = userId, roleId = wuwaRole.roleId)
+
         val savedAccount = accountStore.save(
             WuwaAccount(
                 gameId = wuwaRole.gameId,
@@ -62,6 +76,7 @@ class WuwaRepositoryImpl(
                 serverId = wuwaRole.serverId,
                 serverName = wuwaRole.serverName,
                 nickname = nickname,
+                headPhotoUrl = headPhotoUrl,
             ),
         )
         tokenStore.saveBbsToken(savedAccount.id, token)
@@ -93,7 +108,8 @@ class WuwaRepositoryImpl(
     override suspend fun syncAccounts(): OperationResult<List<DashboardCardModel>> {
         val cards = accountStore.getAccounts().mapNotNull { account ->
             val token = tokenStore.getBbsToken(account.id) ?: return@mapNotNull null
-            fetchDashboardCard(account, token)?.also { snapshotStore.save(account.id, it) }
+            val refreshedAccount = refreshHeadPhotoUrl(account, token)
+            fetchDashboardCard(refreshedAccount, token)?.also { snapshotStore.save(refreshedAccount.id, it) }
         }
         return OperationResult.Success(cards)
     }
@@ -138,6 +154,39 @@ class WuwaRepositoryImpl(
         if (!response.success) return null
         val data = response.data ?: return null
         return WuwaMappers.toDashboardCard(data)
+    }
+
+    private suspend fun findHeadPhotoUrl(
+        token: String,
+        userId: String,
+        roleId: String,
+    ): String? {
+        val response = runCatching {
+            roleApi.findRoleList(
+                headers = headerProvider.nativeHeaders(token),
+                fields = mapOf(
+                    "queryUserId" to userId,
+                    "gameId" to GameType.WUWA.gameId.toString(),
+                ),
+            )
+        }.getOrNull() ?: return null
+
+        if (!response.success) return null
+        return response.data?.findHeadPhotoUrl(roleId) ?: response.data?.findAnyHeadPhotoUrl()
+    }
+
+    private suspend fun refreshHeadPhotoUrl(
+        account: WuwaAccount,
+        token: String,
+    ): WuwaAccount {
+        val headPhotoUrl = findHeadPhotoUrl(
+            token = token,
+            userId = account.userId,
+            roleId = account.roleId,
+        ) ?: return account
+
+        if (headPhotoUrl == account.headPhotoUrl) return account
+        return accountStore.save(account.copy(headPhotoUrl = headPhotoUrl))
     }
 
     private suspend fun refreshDashboardData(
@@ -223,6 +272,33 @@ class WuwaRepositoryImpl(
         roleId = roleId,
         gameId = gameId,
     )
+
+    private fun JsonElement.findHeadPhotoUrl(roleId: String): String? {
+        return when (this) {
+            is JsonObject -> {
+                val currentRoleId = this["roleId"]?.jsonPrimitive?.contentOrNull
+                val headPhotoUrl = this["headPhotoUrl"]?.jsonPrimitive?.contentOrNull?.takeIf { it.isNotBlank() }
+                if (currentRoleId == roleId && headPhotoUrl != null) {
+                    headPhotoUrl
+                } else {
+                    values.firstNotNullOfOrNull { it.findHeadPhotoUrl(roleId) }
+                }
+            }
+            is JsonArray -> firstNotNullOfOrNull { it.findHeadPhotoUrl(roleId) }
+            else -> null
+        }
+    }
+
+    private fun JsonElement.findAnyHeadPhotoUrl(): String? {
+        return when (this) {
+            is JsonObject -> {
+                this["headPhotoUrl"]?.jsonPrimitive?.contentOrNull?.takeIf { it.isNotBlank() }
+                    ?: values.firstNotNullOfOrNull { it.findAnyHeadPhotoUrl() }
+            }
+            is JsonArray -> firstNotNullOfOrNull { it.findAnyHeadPhotoUrl() }
+            else -> null
+        }
+    }
 
     private fun WuwaRequestTokenEnvelopeDto.toAppError(): AppError {
         return mapEnvelopeError(code = code, message = msg, defaultMessage = "获取 b-at 失败")
