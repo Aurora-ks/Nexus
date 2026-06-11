@@ -23,6 +23,8 @@ data class WuwaWidgetDataDto(
     val weeklyRougeData: WuwaMetricDto,
     val towerData: WuwaMetricDto,
     val slashTowerData: WuwaMetricDto,
+    val newTowerData: WuwaMetricDto = WuwaMetricDto.EMPTY,
+    val weeklyFrameData: WuwaMetricDto = WuwaMetricDto.EMPTY,
 )
 
 @Serializable
@@ -37,4 +39,19 @@ data class WuwaMetricDto(
     val refreshTimeStamp: Long,
     val timePreDesc: String?,
     val expireTimeStamp: Long,
-)
+) {
+    companion object {
+        val EMPTY = WuwaMetricDto(
+            name = "",
+            img = null,
+            key = null,
+            value = null,
+            status = 0,
+            cur = 0,
+            total = 0,
+            refreshTimeStamp = 0,
+            timePreDesc = null,
+            expireTimeStamp = 0,
+        )
+    }
+}

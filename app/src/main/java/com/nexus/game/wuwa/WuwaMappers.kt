@@ -33,6 +33,8 @@ object WuwaMappers {
                 dto.weeklyRougeData.toProgressText(),
                 dto.towerData.toProgressText(),
                 dto.slashTowerData.toProgressText(),
+                dto.newTowerData.toProgressText(),
+                dto.weeklyFrameData.toProgressText(),
             ),
             resourceMetrics = listOf(
                 dto.energyData.toResourceMetric(defaultLabel = "结晶波片", includeTimer = true),
@@ -44,6 +46,8 @@ object WuwaMappers {
                 dto.weeklyRougeData.toDetailRow(),
                 dto.towerData.toDetailRow(showRemainingTime = true, forceProgressValue = true),
                 dto.slashTowerData.toDetailRow(showRemainingTime = true, forceProgressValue = true),
+                dto.newTowerData.toDetailRow(forceProgressValue = true),
+                dto.weeklyFrameData.toDetailRow(forceProgressValue = true),
             ),
             progress = dto.battlePassData.toBattlePassProgressModel()
                 ?: dto.weeklyData.toProgressModel(),
