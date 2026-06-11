@@ -1,21 +1,21 @@
-package com.nexus.game.wuwa.api
+package com.nexus.game.pgr.api
 
-import com.nexus.game.wuwa.model.HaruAccountDataEnvelopeDto
-import com.nexus.game.wuwa.model.HaruDailyDataEnvelopeDto
-import com.nexus.game.wuwa.model.HaruRefreshDataEnvelopeDto
+import com.nexus.game.pgr.model.PgrAccountDataEnvelopeDto
+import com.nexus.game.pgr.model.PgrDailyDataEnvelopeDto
+import com.nexus.game.pgr.model.PgrRefreshDataEnvelopeDto
 import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
 import retrofit2.http.HeaderMap
 import retrofit2.http.POST
 
-interface HaruRoleBoxApi {
+interface PgrRoleBoxApi {
     @FormUrlEncoded
     @POST("haru/roleBox/accountData")
     suspend fun getAccountData(
         @HeaderMap headers: Map<String, String>,
         @Field("serverId") serverId: String,
         @Field("roleId") roleId: String,
-    ): HaruAccountDataEnvelopeDto
+    ): PgrAccountDataEnvelopeDto
 
     @FormUrlEncoded
     @POST("haru/roleBox/dailyData")
@@ -24,7 +24,7 @@ interface HaruRoleBoxApi {
         @Field("type") type: Int = 2,
         @Field("serverId") serverId: String,
         @Field("roleId") roleId: String,
-    ): HaruDailyDataEnvelopeDto
+    ): PgrDailyDataEnvelopeDto
 
     @FormUrlEncoded
     @POST("haru/roleBox/refreshData")
@@ -33,5 +33,5 @@ interface HaruRoleBoxApi {
         @Field("gameId") gameId: String = "2",
         @Field("roleId") roleId: String,
         @Field("serverId") serverId: String,
-    ): HaruRefreshDataEnvelopeDto
+    ): PgrRefreshDataEnvelopeDto
 }

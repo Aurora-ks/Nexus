@@ -1,4 +1,4 @@
-package com.nexus.game.wuwa
+package com.nexus.game.kuro
 
 import com.nexus.core.model.AppError
 import com.nexus.core.model.OperationResult
@@ -7,7 +7,7 @@ import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import java.util.Base64
 
-object TokenParser {
+object KuroTokenParser {
     fun parseUserId(token: String): OperationResult<String> {
         val parts = token.split(".")
         if (parts.size < 2) {

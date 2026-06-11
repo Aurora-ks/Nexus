@@ -8,9 +8,10 @@ import com.nexus.core.storage.secure.BoxAccessTokenKey
 import com.nexus.core.storage.secure.TokenStore
 import com.nexus.feature.account.AccountRepository
 import com.nexus.feature.dashboard.DashboardRepository
-import com.nexus.game.wuwa.api.HaruRoleBoxApi
+import com.nexus.game.kuro.KuroTokenParser
+import com.nexus.game.kuro.api.KuroRoleApi
+import com.nexus.game.pgr.PgrRepository
 import com.nexus.game.wuwa.api.WuwaAkiBoxApi
-import com.nexus.game.wuwa.api.WuwaRoleApi
 import com.nexus.game.wuwa.api.WuwaWidgetApi
 import com.nexus.game.wuwa.model.DashboardCardModel
 import com.nexus.game.wuwa.model.WuwaAccount
@@ -23,10 +24,10 @@ import kotlinx.serialization.json.contentOrNull
 import kotlinx.serialization.json.jsonPrimitive
 
 class WuwaRepositoryImpl(
-    private val roleApi: WuwaRoleApi,
+    private val roleApi: KuroRoleApi,
     private val widgetApi: WuwaWidgetApi,
     private val akiBoxApi: WuwaAkiBoxApi,
-    private val haruRoleBoxApi: HaruRoleBoxApi,
+    private val pgrRepository: PgrRepository,
     private val headerProvider: KuroHeaderProvider,
     private val accountStore: WuwaAccountStore,
     private val snapshotStore: WuwaSnapshotStore,
@@ -45,7 +46,7 @@ class WuwaRepositoryImpl(
     }
 
     override suspend fun bindAccount(token: String, nickname: String?): OperationResult<WuwaAccount> {
-        val userId = when (val parsed = TokenParser.parseUserId(token)) {
+        val userId = when (val parsed = KuroTokenParser.parseUserId(token)) {
             is OperationResult.Success -> parsed.value
             is OperationResult.Failure -> return parsed
         }
@@ -126,64 +127,11 @@ class WuwaRepositoryImpl(
     }
 
     override suspend fun bindPgrAccount(token: String, nickname: String?): OperationResult<WuwaAccount> {
-        val userId = when (val parsed = TokenParser.parseUserId(token)) {
-            is OperationResult.Success -> parsed.value
-            is OperationResult.Failure -> return parsed
+        val account = when (val result = pgrRepository.bindAccount(token, nickname)) {
+            is OperationResult.Success -> result.value
+            is OperationResult.Failure -> return result
         }
-
-        val roleResponse = runCatching {
-            roleApi.findUserDefaultRole(
-                headers = headerProvider.nativeHeaders(token),
-                queryUserId = userId,
-            )
-        }.getOrElse {
-            return OperationResult.Failure(AppError.UnknownError(it.message ?: "绑定角色请求失败"))
-        }
-
-        if (!roleResponse.success) {
-            return OperationResult.Failure(AppError.AuthError(roleResponse.msg))
-        }
-
-        val pgrRole = roleResponse.data
-            ?.defaultRoleList
-            ?.firstOrNull { it.gameId == GameType.PGR.gameId }
-            ?: return OperationResult.Failure(AppError.ApiContractError("未找到战双帕弥什角色"))
-
-        val accountDataResponse = runCatching {
-            haruRoleBoxApi.getAccountData(
-                headers = headerProvider.webHeaders(token),
-                serverId = pgrRole.serverId,
-                roleId = pgrRole.roleId,
-            )
-        }.getOrElse {
-            return OperationResult.Failure(AppError.UnknownError(it.message ?: "获取战双角色账号展示数据失败"))
-        }
-
-        if (!accountDataResponse.success) {
-            return OperationResult.Failure(
-                mapEnvelopeError(
-                    code = accountDataResponse.code,
-                    message = accountDataResponse.msg,
-                    defaultMessage = "获取战双角色账号展示数据失败",
-                ),
-            )
-        }
-
-        val accountData = accountDataResponse.data
-            ?: return OperationResult.Failure(AppError.ApiContractError("战双角色账号展示数据响应缺少 data"))
-
-        val savedAccount = accountStore.save(
-            WuwaAccount(
-                gameId = GameType.PGR.gameId,
-                userId = pgrRole.userId,
-                roleId = accountData.roleId,
-                roleName = accountData.roleName,
-                serverId = pgrRole.serverId,
-                serverName = accountData.serverName,
-                nickname = nickname,
-                headPhotoUrl = accountData.headIconUrl,
-            ),
-        )
+        val savedAccount = accountStore.save(account)
         tokenStore.saveBbsToken(savedAccount.id, token)
         fetchDashboardCard(savedAccount, token)?.let { snapshotStore.save(savedAccount.id, it) }
 
@@ -243,49 +191,7 @@ class WuwaRepositoryImpl(
         account: WuwaAccount,
         token: String,
     ): DashboardCardModel? {
-        when (refreshPgrDashboardData(account, token)) {
-            is OperationResult.Success -> Unit
-            is OperationResult.Failure -> return null
-        }
-
-        val response = runCatching {
-            haruRoleBoxApi.getDailyData(
-                headers = headerProvider.webHeaders(token),
-                serverId = account.serverId,
-                roleId = account.roleId,
-            )
-        }.getOrNull() ?: return null
-
-        if (!response.success) return null
-        val data = response.data ?: return null
-        return HaruMappers.toDashboardCard(account, data)
-    }
-
-    private suspend fun refreshPgrDashboardData(
-        account: WuwaAccount,
-        token: String,
-    ): OperationResult<Unit> {
-        val response = runCatching {
-            haruRoleBoxApi.refreshData(
-                headers = headerProvider.webHeaders(token),
-                gameId = GameType.PGR.gameId.toString(),
-                roleId = account.roleId,
-                serverId = account.serverId,
-            )
-        }.getOrElse {
-            return OperationResult.Failure(AppError.UnknownError(it.message ?: "刷新战双日常数据失败"))
-        }
-
-        if (!response.success) {
-            return OperationResult.Failure(
-                mapEnvelopeError(
-                    code = response.code,
-                    message = response.msg,
-                    defaultMessage = "刷新战双日常数据失败",
-                ),
-            )
-        }
-        return OperationResult.Success(Unit)
+        return pgrRepository.fetchDashboardCard(account, token)
     }
 
     private suspend fun findHeadPhotoUrl(

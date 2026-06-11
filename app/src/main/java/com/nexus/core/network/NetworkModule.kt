@@ -2,9 +2,9 @@ package com.nexus.core.network
 
 import com.nexus.app.BuildConfig
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
-import com.nexus.game.wuwa.api.HaruRoleBoxApi
+import com.nexus.game.kuro.api.KuroRoleApi
+import com.nexus.game.pgr.api.PgrRoleBoxApi
 import com.nexus.game.wuwa.api.WuwaAkiBoxApi
-import com.nexus.game.wuwa.api.WuwaRoleApi
 import com.nexus.game.wuwa.api.WuwaWidgetApi
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
@@ -34,8 +34,8 @@ object NetworkModule {
         .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
         .build()
 
-    val wuwaRoleApi: WuwaRoleApi = retrofit.create(WuwaRoleApi::class.java)
+    val kuroRoleApi: KuroRoleApi = retrofit.create(KuroRoleApi::class.java)
     val wuwaWidgetApi: WuwaWidgetApi = retrofit.create(WuwaWidgetApi::class.java)
     val wuwaAkiBoxApi: WuwaAkiBoxApi = retrofit.create(WuwaAkiBoxApi::class.java)
-    val haruRoleBoxApi: HaruRoleBoxApi = retrofit.create(HaruRoleBoxApi::class.java)
+    val pgrRoleBoxApi: PgrRoleBoxApi = retrofit.create(PgrRoleBoxApi::class.java)
 }

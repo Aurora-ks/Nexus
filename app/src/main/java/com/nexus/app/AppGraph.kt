@@ -9,6 +9,7 @@ import com.nexus.core.storage.db.NexusDatabase
 import com.nexus.core.storage.preferences.SharedPreferencesDeviceIdentityStore
 import com.nexus.core.storage.secure.EncryptedTokenStore
 import com.nexus.core.storage.secure.TokenStore
+import com.nexus.game.pgr.PgrRepository
 import com.nexus.game.wuwa.InMemoryWuwaSnapshotStore
 import com.nexus.game.wuwa.RoomWuwaAccountStore
 import com.nexus.game.wuwa.WuwaRepositoryImpl
@@ -42,10 +43,14 @@ object AppGraph {
             "AppGraph must be initialized from NexusApplication before repository access."
         }
         WuwaRepositoryImpl(
-            roleApi = NetworkModule.wuwaRoleApi,
+            roleApi = NetworkModule.kuroRoleApi,
             widgetApi = NetworkModule.wuwaWidgetApi,
             akiBoxApi = NetworkModule.wuwaAkiBoxApi,
-            haruRoleBoxApi = NetworkModule.haruRoleBoxApi,
+            pgrRepository = PgrRepository(
+                roleApi = NetworkModule.kuroRoleApi,
+                roleBoxApi = NetworkModule.pgrRoleBoxApi,
+                headerProvider = headerProvider,
+            ),
             headerProvider = headerProvider,
             accountStore = accountStore,
             snapshotStore = snapshotStore,

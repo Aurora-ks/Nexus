@@ -470,7 +470,7 @@ private fun MetricColumn(
             text = metric.caption,
             style = MaterialTheme.typography.bodyMedium,
             color = TextMuted,
-            maxLines = 1,
+            maxLines = 2,
             overflow = TextOverflow.Ellipsis,
         )
     }
@@ -530,7 +530,7 @@ private fun DetailRow(
                     text = row.caption,
                     style = MaterialTheme.typography.bodyMedium,
                     color = TextMuted,
-                    maxLines = 1,
+                    maxLines = 2,
                     overflow = TextOverflow.Ellipsis,
                 )
             }

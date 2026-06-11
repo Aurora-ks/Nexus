@@ -1,20 +1,20 @@
-package com.nexus.game.wuwa
+package com.nexus.game.pgr
 
+import com.nexus.game.pgr.model.PgrDailyDataDto
+import com.nexus.game.pgr.model.PgrDailyDataItemDto
 import com.nexus.game.wuwa.model.DashboardCardModel
 import com.nexus.game.wuwa.model.DashboardDetailRowModel
 import com.nexus.game.wuwa.model.DashboardMetricAccent
 import com.nexus.game.wuwa.model.DashboardMetricModel
-import com.nexus.game.wuwa.model.HaruDailyDataDto
-import com.nexus.game.wuwa.model.HaruDailyDataItemDto
 import com.nexus.game.wuwa.model.WuwaAccount
 import java.time.Instant
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
-object HaruMappers {
+object PgrMappers {
     private val formatter = DateTimeFormatter.ofPattern("MM-dd HH:mm")
 
-    fun toDashboardCard(account: WuwaAccount, dto: HaruDailyDataDto): DashboardCardModel {
+    fun toDashboardCard(account: WuwaAccount, dto: PgrDailyDataDto): DashboardCardModel {
         return DashboardCardModel(
             title = account.roleName,
             subtitle = account.serverName,
@@ -44,7 +44,7 @@ object HaruMappers {
         )
     }
 
-    private fun HaruDailyDataItemDto.toResourceMetric(
+    private fun PgrDailyDataItemDto.toResourceMetric(
         defaultLabel: String,
         includeTimer: Boolean = false,
     ): DashboardMetricModel {
@@ -56,53 +56,74 @@ object HaruMappers {
         )
     }
 
-    private fun HaruDailyDataItemDto.toDetailRow(
+    private fun PgrDailyDataItemDto.toDetailRow(
         defaultLabel: String,
         showRemainingTime: Boolean = false,
     ): DashboardDetailRowModel {
         return DashboardDetailRowModel(
             label = displayLabel(defaultLabel),
             value = toDisplayValue(),
-            caption = toCaption(includeTimer = showRemainingTime).takeIf { it != "--" },
+            caption = toCaption(includeTimer = showRemainingTime).takeIf { it.isNotBlank() },
         )
     }
 
-    private fun HaruDailyDataItemDto.toDisplayText(defaultLabel: String): String {
+    private fun PgrDailyDataItemDto.toDisplayText(defaultLabel: String): String {
         return "${displayLabel(defaultLabel)} ${toDisplayValue()}"
     }
 
-    private fun HaruDailyDataItemDto.displayLabel(defaultLabel: String): String {
+    private fun PgrDailyDataItemDto.displayLabel(defaultLabel: String): String {
         return name?.takeIf { it.isNotBlank() }
             ?: key?.takeIf { it.isNotBlank() }
             ?: defaultLabel
     }
 
-    private fun HaruDailyDataItemDto.toDisplayValue(): String {
+    private fun PgrDailyDataItemDto.toDisplayValue(): String {
         return when {
             total > 0 -> "$cur/$total"
             else -> "--/--"
         }
     }
 
-    private fun HaruDailyDataItemDto.toCaption(includeTimer: Boolean): String {
-        return when {
-            includeTimer && refreshTimeStamp != null && refreshTimeStamp > 0 -> {
-                "刷新剩余${refreshTimeStamp.toRemainingDaysHoursText()}"
+    private fun PgrDailyDataItemDto.toCaption(includeTimer: Boolean): String {
+        val captions = buildList {
+            if (includeTimer && refreshTimeStamp != null && refreshTimeStamp > 0) {
+                add("剩余${refreshTimeStamp.toRefreshTimeText()}")
             }
-            else -> ""
+            expireTimeStamp?.let {
+                add("到期 ${it.toRelativeTimeText()}")
+            }
+        }
+        return captions.joinToString("\n")
+    }
+
+    private fun Long.toRefreshTimeText(): String {
+        val diff = secondsUntil()
+        return when {
+            diff >= 604_800 -> "${diff / 604_800}周"
+            diff >= 86_400 -> "${diff / 86_400}天"
+            else -> {
+                val hours = diff / 3_600
+                val minutes = (diff % 3_600) / 60
+                "${hours}小时${minutes}分钟"
+            }
         }
     }
 
-    private fun Long.toRemainingDaysHoursText(): String {
-        val now = Instant.now().epochSecond
-        val diff = (this - now).coerceAtLeast(0)
-        if (diff == 0L) return "0时"
-        val days = diff / 86_400
-        val hours = (diff % 86_400) / 3_600
-        return if (days >= 1) {
-            "${days}天${hours}时"
-        } else {
-            "${(diff + 3_599) / 3_600}时"
+    private fun Long.toRelativeTimeText(): String {
+        val diff = secondsUntil()
+        return when {
+            diff >= 604_800 -> "${diff.ceilDiv(604_800)}周"
+            diff >= 86_400 -> "${diff.ceilDiv(86_400)}天"
+            else -> "${diff.ceilDiv(3_600)}小时"
         }
+    }
+
+    private fun Long.secondsUntil(): Long {
+        val now = Instant.now().epochSecond
+        return (this - now).coerceAtLeast(0)
+    }
+
+    private fun Long.ceilDiv(divisor: Long): Long {
+        return if (this == 0L) 0L else (this + divisor - 1) / divisor
     }
 }
