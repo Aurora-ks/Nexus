@@ -52,6 +52,7 @@ class KuroHeaderProvider(
             "devCode" to "$ipAddress, $userAgent",
             "did" to identity.did,
             "Origin" to "https://web-static.kurobbs.com",
+            "Referer" to "https://web-static.kurobbs.com/",
             "Sec-Fetch-Site" to "same-site",
             "Sec-Fetch-Mode" to "cors",
             "Sec-Fetch-Dest" to "empty",

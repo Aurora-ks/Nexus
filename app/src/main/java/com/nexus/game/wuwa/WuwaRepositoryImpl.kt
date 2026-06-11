@@ -8,6 +8,7 @@ import com.nexus.core.storage.secure.BoxAccessTokenKey
 import com.nexus.core.storage.secure.TokenStore
 import com.nexus.feature.account.AccountRepository
 import com.nexus.feature.dashboard.DashboardRepository
+import com.nexus.game.wuwa.api.HaruRoleBoxApi
 import com.nexus.game.wuwa.api.WuwaAkiBoxApi
 import com.nexus.game.wuwa.api.WuwaRoleApi
 import com.nexus.game.wuwa.api.WuwaWidgetApi
@@ -25,6 +26,7 @@ class WuwaRepositoryImpl(
     private val roleApi: WuwaRoleApi,
     private val widgetApi: WuwaWidgetApi,
     private val akiBoxApi: WuwaAkiBoxApi,
+    private val haruRoleBoxApi: HaruRoleBoxApi,
     private val headerProvider: KuroHeaderProvider,
     private val accountStore: WuwaAccountStore,
     private val snapshotStore: WuwaSnapshotStore,
@@ -36,6 +38,7 @@ class WuwaRepositoryImpl(
 
     suspend fun refreshAccountProfiles(): List<WuwaAccount> {
         return accountStore.getAccounts().map { account ->
+            if (account.gameId != GameType.WUWA.gameId) return@map account
             val token = tokenStore.getBbsToken(account.id) ?: return@map account
             refreshHeadPhotoUrl(account, token)
         }
@@ -108,7 +111,11 @@ class WuwaRepositoryImpl(
     override suspend fun syncAccounts(): OperationResult<List<DashboardCardModel>> {
         val cards = accountStore.getAccounts().mapNotNull { account ->
             val token = tokenStore.getBbsToken(account.id) ?: return@mapNotNull null
-            val refreshedAccount = refreshHeadPhotoUrl(account, token)
+            val refreshedAccount = if (account.gameId == GameType.WUWA.gameId) {
+                refreshHeadPhotoUrl(account, token)
+            } else {
+                account
+            }
             fetchDashboardCard(refreshedAccount, token)?.also { snapshotStore.save(refreshedAccount.id, it) }
         }
         return OperationResult.Success(cards)
@@ -116,6 +123,71 @@ class WuwaRepositoryImpl(
 
     override suspend fun bindWuwaAccount(token: String, nickname: String?): OperationResult<WuwaAccount> {
         return bindAccount(token, nickname)
+    }
+
+    override suspend fun bindPgrAccount(token: String, nickname: String?): OperationResult<WuwaAccount> {
+        val userId = when (val parsed = TokenParser.parseUserId(token)) {
+            is OperationResult.Success -> parsed.value
+            is OperationResult.Failure -> return parsed
+        }
+
+        val roleResponse = runCatching {
+            roleApi.findUserDefaultRole(
+                headers = headerProvider.nativeHeaders(token),
+                queryUserId = userId,
+            )
+        }.getOrElse {
+            return OperationResult.Failure(AppError.UnknownError(it.message ?: "绑定角色请求失败"))
+        }
+
+        if (!roleResponse.success) {
+            return OperationResult.Failure(AppError.AuthError(roleResponse.msg))
+        }
+
+        val pgrRole = roleResponse.data
+            ?.defaultRoleList
+            ?.firstOrNull { it.gameId == GameType.PGR.gameId }
+            ?: return OperationResult.Failure(AppError.ApiContractError("未找到战双帕弥什角色"))
+
+        val accountDataResponse = runCatching {
+            haruRoleBoxApi.getAccountData(
+                headers = headerProvider.webHeaders(token),
+                serverId = pgrRole.serverId,
+                roleId = pgrRole.roleId,
+            )
+        }.getOrElse {
+            return OperationResult.Failure(AppError.UnknownError(it.message ?: "获取战双角色账号展示数据失败"))
+        }
+
+        if (!accountDataResponse.success) {
+            return OperationResult.Failure(
+                mapEnvelopeError(
+                    code = accountDataResponse.code,
+                    message = accountDataResponse.msg,
+                    defaultMessage = "获取战双角色账号展示数据失败",
+                ),
+            )
+        }
+
+        val accountData = accountDataResponse.data
+            ?: return OperationResult.Failure(AppError.ApiContractError("战双角色账号展示数据响应缺少 data"))
+
+        val savedAccount = accountStore.save(
+            WuwaAccount(
+                gameId = GameType.PGR.gameId,
+                userId = pgrRole.userId,
+                roleId = accountData.roleId,
+                roleName = accountData.roleName,
+                serverId = pgrRole.serverId,
+                serverName = accountData.serverName,
+                nickname = nickname,
+                headPhotoUrl = accountData.headIconUrl,
+            ),
+        )
+        tokenStore.saveBbsToken(savedAccount.id, token)
+        fetchDashboardCard(savedAccount, token)?.let { snapshotStore.save(savedAccount.id, it) }
+
+        return OperationResult.Success(savedAccount)
     }
 
     override suspend fun updateWuwaAccountRemark(
@@ -137,6 +209,17 @@ class WuwaRepositoryImpl(
         account: WuwaAccount,
         token: String,
     ): DashboardCardModel? {
+        return when (account.gameId) {
+            GameType.WUWA.gameId -> fetchWuwaDashboardCard(account, token)
+            GameType.PGR.gameId -> fetchPgrDashboardCard(account, token)
+            else -> null
+        }
+    }
+
+    private suspend fun fetchWuwaDashboardCard(
+        account: WuwaAccount,
+        token: String,
+    ): DashboardCardModel? {
         when (refreshDashboardData(account, token)) {
             is OperationResult.Success -> Unit
             is OperationResult.Failure -> return null
@@ -154,6 +237,55 @@ class WuwaRepositoryImpl(
         if (!response.success) return null
         val data = response.data ?: return null
         return WuwaMappers.toDashboardCard(data)
+    }
+
+    private suspend fun fetchPgrDashboardCard(
+        account: WuwaAccount,
+        token: String,
+    ): DashboardCardModel? {
+        when (refreshPgrDashboardData(account, token)) {
+            is OperationResult.Success -> Unit
+            is OperationResult.Failure -> return null
+        }
+
+        val response = runCatching {
+            haruRoleBoxApi.getDailyData(
+                headers = headerProvider.webHeaders(token),
+                serverId = account.serverId,
+                roleId = account.roleId,
+            )
+        }.getOrNull() ?: return null
+
+        if (!response.success) return null
+        val data = response.data ?: return null
+        return HaruMappers.toDashboardCard(account, data)
+    }
+
+    private suspend fun refreshPgrDashboardData(
+        account: WuwaAccount,
+        token: String,
+    ): OperationResult<Unit> {
+        val response = runCatching {
+            haruRoleBoxApi.refreshData(
+                headers = headerProvider.webHeaders(token),
+                gameId = GameType.PGR.gameId.toString(),
+                roleId = account.roleId,
+                serverId = account.serverId,
+            )
+        }.getOrElse {
+            return OperationResult.Failure(AppError.UnknownError(it.message ?: "刷新战双日常数据失败"))
+        }
+
+        if (!response.success) {
+            return OperationResult.Failure(
+                mapEnvelopeError(
+                    code = response.code,
+                    message = response.msg,
+                    defaultMessage = "刷新战双日常数据失败",
+                ),
+            )
+        }
+        return OperationResult.Success(Unit)
     }
 
     private suspend fun findHeadPhotoUrl(

@@ -52,6 +52,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.nexus.app.AppGraph
+import com.nexus.core.model.GameType
 import com.nexus.core.model.OperationResult
 import com.nexus.game.wuwa.model.DashboardCardModel
 import com.nexus.game.wuwa.model.DashboardDetailRowModel
@@ -126,9 +127,8 @@ fun DashboardScreen(innerPadding: PaddingValues) {
     }
 
     val overview = remember(accounts, cards) { buildOverviewState(accounts, cards) }
-    val focusAccount = overview.focusAccount
-    val focusCard = overview.focusCard
-    var isCardExpanded by rememberSaveable(focusAccount?.id) { mutableStateOf(false) }
+    val cardByIdentity = remember(cards) { cards.associateBy { "${it.title}:${it.subtitle}" } }
+    var expandedAccountIds by rememberSaveable { mutableStateOf(emptyList<Long>()) }
 
     Column(
         modifier = Modifier
@@ -174,7 +174,7 @@ fun DashboardScreen(innerPadding: PaddingValues) {
 
             NexusPanel(modifier = Modifier.fillMaxWidth()) {
                 Text(
-                    text = "今日签到状态",
+                    text = "今日状态",
                     style = MaterialTheme.typography.titleLarge,
                     color = TextPrimary,
                 )
@@ -187,11 +187,11 @@ fun DashboardScreen(innerPadding: PaddingValues) {
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
                     NexusStatusChip(
-                        text = "${overview.successCount} 已签到",
+                        text = "${overview.successCount} 已更新",
                         tone = NexusStatusTone.Success,
                     )
                     NexusStatusChip(
-                        text = "${overview.pendingCount} 待处理",
+                        text = "${overview.pendingCount} 待同步",
                         tone = NexusStatusTone.Warning,
                     )
                     NexusStatusChip(
@@ -201,7 +201,7 @@ fun DashboardScreen(innerPadding: PaddingValues) {
                 }
             }
 
-            if (focusAccount == null) {
+            if (accounts.isEmpty()) {
                 NexusEmptyStateCard(
                     title = "暂无账号概览",
                     description = "完成账号绑定后，这里会展示体力、签到与周常摘要。",
@@ -209,13 +209,27 @@ fun DashboardScreen(innerPadding: PaddingValues) {
                     modifier = Modifier.fillMaxWidth(),
                 )
             } else {
-                WuwaCollapsedCard(
-                    account = focusAccount,
-                    card = focusCard,
-                    expanded = isCardExpanded,
-                    onToggleExpanded = { isCardExpanded = !isCardExpanded },
-                    modifier = Modifier.fillMaxWidth(),
-                )
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(12.dp),
+                ) {
+                    accounts.forEach { account ->
+                        val card = cardByIdentity["${account.roleName}:${account.serverName}"]
+                        val expanded = expandedAccountIds.contains(account.id)
+                        WuwaCollapsedCard(
+                            account = account,
+                            card = card,
+                            expanded = expanded,
+                            onToggleExpanded = {
+                                expandedAccountIds = if (expanded) {
+                                    expandedAccountIds - account.id
+                                } else {
+                                    expandedAccountIds + account.id
+                                }
+                            },
+                            modifier = Modifier.fillMaxWidth(),
+                        )
+                    }
+                }
             }
 
             if (isRefreshing) {
@@ -246,7 +260,7 @@ private fun WuwaCollapsedCard(
     modifier: Modifier = Modifier,
 ) {
     val metrics = card?.resourceMetrics.orEmpty().let { metrics ->
-        if (metrics.isNotEmpty()) metrics else fallbackMetrics(card)
+        if (metrics.isNotEmpty()) metrics else fallbackMetrics(account, card)
     }
     val detailRows = card?.detailRows.orEmpty().ifEmpty {
         card?.weeklyFocus.orEmpty().take(3).mapNotNull { item -> item.toDetailRowOrNull() }
@@ -286,7 +300,7 @@ private fun WuwaCollapsedCard(
                         overflow = TextOverflow.Ellipsis,
                     )
                     Text(
-                        text = card?.uidText ?: "UID ${account.roleId}",
+                        text = "${account.gameDisplayName()} · ${card?.uidText ?: "UID ${account.roleId}"}",
                         style = MaterialTheme.typography.bodyMedium,
                         color = TextMuted,
                     )
@@ -588,7 +602,27 @@ private fun ProgressSection(
     }
 }
 
-private fun fallbackMetrics(card: DashboardCardModel?): List<DashboardMetricModel> {
+private fun fallbackMetrics(account: WuwaAccount, card: DashboardCardModel?): List<DashboardMetricModel> {
+    if (account.gameId == GameType.PGR.gameId) {
+        return listOf(
+            DashboardMetricModel(
+                label = "血清",
+                value = card?.energyText?.substringAfter(' ') ?: "--/--",
+                caption = card?.signInStatus ?: "--",
+            ),
+            DashboardMetricModel(
+                label = "每日活跃",
+                value = card?.weeklyFocus?.getOrNull(1)?.substringAfterLast(' ') ?: "--/--",
+                caption = card?.weeklyFocus?.getOrNull(1)?.substringBeforeLast(' ') ?: "--",
+            ),
+            DashboardMetricModel(
+                label = "委托情况",
+                value = card?.weeklyFocus?.getOrNull(2)?.substringAfterLast(' ') ?: "--",
+                caption = card?.weeklyFocus?.getOrNull(2)?.substringBeforeLast(' ') ?: "--",
+            ),
+        )
+    }
+
     val energyText = card?.energyText?.substringAfter(' ') ?: "--/--"
     return listOf(
         DashboardMetricModel(
@@ -638,46 +672,33 @@ private fun String.toDetailRowOrNull(): DashboardDetailRowModel? {
     )
 }
 
+private fun WuwaAccount.gameDisplayName(): String {
+    return when (gameId) {
+        GameType.WUWA.gameId -> "鸣潮"
+        GameType.PGR.gameId -> "战双帕弥什"
+        else -> "未知游戏"
+    }
+}
+
 private data class DashboardOverviewState(
     val summaryText: String,
     val successCount: Int,
     val pendingCount: Int,
     val alertCount: Int,
-    val focusAccount: WuwaAccount?,
-    val focusCard: DashboardCardModel?,
-    val focusStatusLabel: String,
-    val focusTone: NexusStatusTone,
 )
 
 private fun buildOverviewState(
     accounts: List<WuwaAccount>,
     cards: List<DashboardCardModel>,
 ): DashboardOverviewState {
-    val cardByIdentity = cards.associateBy { "${it.title}:${it.subtitle}" }
-    val successCount = cards.count { it.signInStatus.contains("已") && !it.signInStatus.contains("失效") }
-    val pendingCount = cards.count { it.signInStatus.contains("未") || it.signInStatus.contains("待") }
-    val alertCount = (accounts.size - cards.size).coerceAtLeast(0) + cards.count { it.signInStatus.contains("失效") || it.signInStatus.contains("失败") }
-    val focusAccount = accounts.firstOrNull()
-    val focusCard = focusAccount?.let { account ->
-        cardByIdentity["${account.roleName}:${account.serverName}"]
-    } ?: cards.firstOrNull()
-
-    val focusStatusLabel = when {
-        focusCard == null -> "待同步"
-        focusCard.signInStatus.contains("失效") || focusCard.signInStatus.contains("失败") -> "异常"
-        focusCard.signInStatus.contains("已") -> "已签到"
-        else -> "待处理"
-    }
-    val focusTone = when (focusStatusLabel) {
-        "已签到" -> NexusStatusTone.Success
-        "异常" -> NexusStatusTone.Error
-        else -> NexusStatusTone.Warning
-    }
+    val successCount = cards.size
+    val pendingCount = (accounts.size - cards.size).coerceAtLeast(0)
+    val alertCount = cards.count { it.signInStatus.contains("失效") || it.signInStatus.contains("失败") }
 
     val summaryText = when {
         accounts.isEmpty() -> "还没有接入任何账号，先去账号页完成 Token 绑定。"
         cards.isEmpty() -> "已接入 ${accounts.size} 个账号，当前还没有可用的同步摘要。"
-        else -> "${accounts.size} 个账号已接入，其中 ${successCount.coerceAtMost(accounts.size)} 个已完成签到，${alertCount.coerceAtLeast(0)} 个需要关注。"
+        else -> "${accounts.size} 个账号已接入，其中 ${successCount.coerceAtMost(accounts.size)} 个已有最新摘要，${pendingCount} 个待同步。"
     }
 
     return DashboardOverviewState(
@@ -685,9 +706,5 @@ private fun buildOverviewState(
         successCount = successCount.coerceAtLeast(0),
         pendingCount = pendingCount.coerceAtLeast(0),
         alertCount = alertCount.coerceAtLeast(0),
-        focusAccount = focusAccount,
-        focusCard = focusCard,
-        focusStatusLabel = focusStatusLabel,
-        focusTone = focusTone,
     )
 }

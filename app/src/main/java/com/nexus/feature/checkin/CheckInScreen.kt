@@ -33,6 +33,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import com.nexus.app.AppGraph
+import com.nexus.core.model.GameType
 import com.nexus.game.wuwa.model.DashboardCardModel
 import com.nexus.game.wuwa.model.WuwaAccount
 import com.nexus.ui.components.NexusEmptyStateCard
@@ -57,7 +58,7 @@ fun CheckInScreen(innerPadding: PaddingValues) {
     var results by remember { mutableStateOf(emptyList<CheckInResultUi>()) }
 
     LaunchedEffect(Unit) {
-        accounts = repository.getBoundAccounts()
+        accounts = repository.getBoundAccounts().filterWuwaAccounts()
         cards = repository.getCachedDashboardCards()
     }
 
@@ -216,6 +217,10 @@ private data class CheckInResultUi(
     val icon: ImageVector,
     val actionLabel: String? = null,
 )
+
+private fun List<WuwaAccount>.filterWuwaAccounts(): List<WuwaAccount> {
+    return filter { it.gameId == GameType.WUWA.gameId }
+}
 
 private enum class CheckInTone {
     Success,

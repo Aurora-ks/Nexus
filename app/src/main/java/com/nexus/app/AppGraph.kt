@@ -45,6 +45,7 @@ object AppGraph {
             roleApi = NetworkModule.wuwaRoleApi,
             widgetApi = NetworkModule.wuwaWidgetApi,
             akiBoxApi = NetworkModule.wuwaAkiBoxApi,
+            haruRoleBoxApi = NetworkModule.haruRoleBoxApi,
             headerProvider = headerProvider,
             accountStore = accountStore,
             snapshotStore = snapshotStore,

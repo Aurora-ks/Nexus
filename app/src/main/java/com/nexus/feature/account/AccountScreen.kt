@@ -86,6 +86,10 @@ fun AccountScreen(innerPadding: PaddingValues) {
                 value = GameType.WUWA.name,
                 label = "鸣潮",
             ),
+            NexusDropdownOption(
+                value = GameType.PGR.name,
+                label = "战双帕弥什",
+            ),
         )
     }
 
@@ -189,6 +193,7 @@ fun AccountScreen(innerPadding: PaddingValues) {
                             isSubmitting = true
                             when (val result = when (selectedGame.value) {
                                 GameType.WUWA.name -> bindAccount(token, nickname.ifBlank { null })
+                                GameType.PGR.name -> repository.bindPgrAccount(token, nickname.ifBlank { null })
                                 else -> OperationResult.Failure(
                                     AppError.UnknownError("当前暂不支持该游戏账号绑定"),
                                 )
@@ -310,7 +315,7 @@ private fun BoundAccountRow(
                 color = TextPrimary,
             )
             Text(
-                text = "${account.serverName} · ${account.roleName}",
+                text = "${account.gameDisplayName()} · ${account.serverName} · ${account.roleName}",
                 style = MaterialTheme.typography.bodyMedium,
                 color = TextMuted,
             )
@@ -580,6 +585,14 @@ private fun DeleteAccountDialog(
 
 private fun WuwaAccount.displayName(): String {
     return nickname?.takeIf { it.isNotBlank() } ?: roleName
+}
+
+private fun WuwaAccount.gameDisplayName(): String {
+    return when (gameId) {
+        GameType.WUWA.gameId -> "鸣潮"
+        GameType.PGR.gameId -> "战双帕弥什"
+        else -> "未知游戏"
+    }
 }
 
 private fun AppError.toUserMessage(): String {
