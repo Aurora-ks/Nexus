@@ -62,10 +62,7 @@ import com.nexus.game.wuwa.model.DashboardProgressModel
 import com.nexus.game.wuwa.model.WuwaAccount
 import com.nexus.ui.components.NexusEmptyStateCard
 import com.nexus.ui.components.NexusPage
-import com.nexus.ui.components.NexusPanel
 import com.nexus.ui.components.NexusPrimaryButton
-import com.nexus.ui.components.NexusStatusChip
-import com.nexus.ui.components.NexusStatusTone
 import com.nexus.ui.theme.AccentPrimary
 import com.nexus.ui.theme.BackgroundWarm
 import com.nexus.ui.theme.BorderSubtle
@@ -87,7 +84,6 @@ fun DashboardScreen(innerPadding: PaddingValues) {
     var accounts by remember { mutableStateOf(emptyList<WuwaAccount>()) }
     var cards by remember { mutableStateOf(emptyList<DashboardCardModel>()) }
     var isRefreshing by remember { mutableStateOf(false) }
-    var statusMessage by remember { mutableStateOf("点击刷新概览后展示最新摘要。") }
 
     suspend fun reloadLocalState(refreshProfiles: Boolean = false) {
         accounts = if (refreshProfiles) {
@@ -98,17 +94,8 @@ fun DashboardScreen(innerPadding: PaddingValues) {
         cards = repository.getCachedDashboardCards()
     }
 
-    fun updateStatusMessage() {
-        statusMessage = when {
-            accounts.isEmpty() -> "还没有接入账号，请先去账号页完成绑定。"
-            cards.isEmpty() -> "账号已绑定，点击刷新概览后会拉取最新摘要。"
-            else -> "已载入最近一次同步快照。"
-        }
-    }
-
     LaunchedEffect(Unit) {
         reloadLocalState(refreshProfiles = true)
-        updateStatusMessage()
     }
 
     DisposableEffect(lifecycleOwner) {
@@ -116,7 +103,6 @@ fun DashboardScreen(innerPadding: PaddingValues) {
             if (event == Lifecycle.Event.ON_RESUME) {
                 scope.launch {
                     reloadLocalState(refreshProfiles = true)
-                    updateStatusMessage()
                 }
             }
         }
@@ -126,7 +112,6 @@ fun DashboardScreen(innerPadding: PaddingValues) {
         }
     }
 
-    val overview = remember(accounts, cards) { buildOverviewState(accounts, cards) }
     val cardByIdentity = remember(cards) { cards.associateBy { "${it.title}:${it.subtitle}" } }
     var expandedAccountIds by rememberSaveable { mutableStateOf(emptyList<Long>()) }
 
@@ -155,15 +140,9 @@ fun DashboardScreen(innerPadding: PaddingValues) {
                             is OperationResult.Success -> {
                                 cards = result.value
                                 accounts = repository.getBoundAccounts()
-                                statusMessage = if (result.value.isEmpty()) {
-                                    "已尝试同步，但目前还没有可展示的账号摘要。"
-                                } else {
-                                    "同步完成，共更新 ${result.value.size} 个账号。"
-                                }
                             }
                             is OperationResult.Failure -> {
                                 reloadLocalState()
-                                statusMessage = "同步失败，请稍后再试。"
                             }
                         }
                         isRefreshing = false
@@ -171,35 +150,6 @@ fun DashboardScreen(innerPadding: PaddingValues) {
                 },
                 modifier = Modifier.width(132.dp),
             )
-
-            NexusPanel(modifier = Modifier.fillMaxWidth()) {
-                Text(
-                    text = "今日状态",
-                    style = MaterialTheme.typography.titleLarge,
-                    color = TextPrimary,
-                )
-                Text(
-                    text = overview.summaryText,
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = TextSecondary,
-                )
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                ) {
-                    NexusStatusChip(
-                        text = "${overview.successCount} 已更新",
-                        tone = NexusStatusTone.Success,
-                    )
-                    NexusStatusChip(
-                        text = "${overview.pendingCount} 待同步",
-                        tone = NexusStatusTone.Warning,
-                    )
-                    NexusStatusChip(
-                        text = "${overview.alertCount} 异常",
-                        tone = NexusStatusTone.Error,
-                    )
-                }
-            }
 
             if (accounts.isEmpty()) {
                 NexusEmptyStateCard(
@@ -242,11 +192,6 @@ fun DashboardScreen(innerPadding: PaddingValues) {
                 }
             }
 
-            Text(
-                text = statusMessage,
-                style = MaterialTheme.typography.bodyLarge,
-                color = TextMuted,
-            )
         }
     }
 }
@@ -440,23 +385,25 @@ private fun MetricColumn(
     }
 
     Column(
-        modifier = modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+        modifier = modifier.padding(horizontal = 4.dp, vertical = 4.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(4.dp),
     ) {
         Row(
-            horizontalArrangement = Arrangement.spacedBy(6.dp),
+            horizontalArrangement = Arrangement.spacedBy(4.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             MetricImage(
                 imageUrl = metric.imageUrl,
                 contentDescription = metric.label,
-                modifier = Modifier.size(22.dp),
+                modifier = Modifier.size(20.dp),
             )
             Text(
                 text = metric.value,
                 style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold),
                 color = accentColor,
+                maxLines = 1,
+                softWrap = false,
             )
         }
         Text(
@@ -678,33 +625,4 @@ private fun WuwaAccount.gameDisplayName(): String {
         GameType.PGR.gameId -> "战双帕弥什"
         else -> "未知游戏"
     }
-}
-
-private data class DashboardOverviewState(
-    val summaryText: String,
-    val successCount: Int,
-    val pendingCount: Int,
-    val alertCount: Int,
-)
-
-private fun buildOverviewState(
-    accounts: List<WuwaAccount>,
-    cards: List<DashboardCardModel>,
-): DashboardOverviewState {
-    val successCount = cards.size
-    val pendingCount = (accounts.size - cards.size).coerceAtLeast(0)
-    val alertCount = cards.count { it.signInStatus.contains("失效") || it.signInStatus.contains("失败") }
-
-    val summaryText = when {
-        accounts.isEmpty() -> "还没有接入任何账号，先去账号页完成 Token 绑定。"
-        cards.isEmpty() -> "已接入 ${accounts.size} 个账号，当前还没有可用的同步摘要。"
-        else -> "${accounts.size} 个账号已接入，其中 ${successCount.coerceAtMost(accounts.size)} 个已有最新摘要，${pendingCount} 个待同步。"
-    }
-
-    return DashboardOverviewState(
-        summaryText = summaryText,
-        successCount = successCount.coerceAtLeast(0),
-        pendingCount = pendingCount.coerceAtLeast(0),
-        alertCount = alertCount.coerceAtLeast(0),
-    )
 }
