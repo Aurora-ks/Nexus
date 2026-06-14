@@ -24,12 +24,13 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.KeyboardArrowDown
 import androidx.compose.material.icons.outlined.KeyboardArrowUp
 import androidx.compose.material.icons.outlined.Refresh
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -62,7 +63,6 @@ import com.nexus.game.wuwa.model.DashboardProgressModel
 import com.nexus.game.wuwa.model.WuwaAccount
 import com.nexus.ui.components.NexusEmptyStateCard
 import com.nexus.ui.components.NexusPage
-import com.nexus.ui.components.NexusPrimaryButton
 import com.nexus.ui.theme.AccentPrimary
 import com.nexus.ui.theme.BackgroundWarm
 import com.nexus.ui.theme.BorderSubtle
@@ -74,6 +74,7 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DashboardScreen(innerPadding: PaddingValues) {
     val repository = remember { AppGraph.repository }
@@ -98,6 +99,23 @@ fun DashboardScreen(innerPadding: PaddingValues) {
         reloadLocalState(refreshProfiles = true)
     }
 
+    fun refreshDashboard() {
+        if (isRefreshing) return
+        scope.launch {
+            isRefreshing = true
+            when (val result = syncUseCase()) {
+                is OperationResult.Success -> {
+                    cards = result.value
+                    accounts = repository.getBoundAccounts()
+                }
+                is OperationResult.Failure -> {
+                    reloadLocalState()
+                }
+            }
+            isRefreshing = false
+        }
+    }
+
     DisposableEffect(lifecycleOwner) {
         val observer = LifecycleEventObserver { _, event ->
             if (event == Lifecycle.Event.ON_RESUME) {
@@ -115,40 +133,24 @@ fun DashboardScreen(innerPadding: PaddingValues) {
     val cardByIdentity = remember(cards) { cards.associateBy { "${it.title}:${it.subtitle}" } }
     var expandedAccountIds by rememberSaveable { mutableStateOf(emptyList<Long>()) }
 
-    Column(
+    PullToRefreshBox(
+        isRefreshing = isRefreshing,
+        onRefresh = ::refreshDashboard,
         modifier = Modifier
             .fillMaxSize()
             .background(BackgroundWarm)
             .statusBarsPadding()
-            .padding(innerPadding)
-            .verticalScroll(rememberScrollState()),
+            .padding(innerPadding),
     ) {
-        NexusPage {
+        NexusPage(
+            modifier = Modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState()),
+        ) {
             Text(
                 text = "概览",
                 style = MaterialTheme.typography.headlineLarge,
                 color = TextPrimary,
-            )
-            NexusPrimaryButton(
-                label = if (isRefreshing) "刷新中..." else "刷新概览",
-                icon = Icons.Outlined.Refresh,
-                onClick = {
-                    if (isRefreshing) return@NexusPrimaryButton
-                    scope.launch {
-                        isRefreshing = true
-                        when (val result = syncUseCase()) {
-                            is OperationResult.Success -> {
-                                cards = result.value
-                                accounts = repository.getBoundAccounts()
-                            }
-                            is OperationResult.Failure -> {
-                                reloadLocalState()
-                            }
-                        }
-                        isRefreshing = false
-                    }
-                },
-                modifier = Modifier.width(132.dp),
             )
 
             if (accounts.isEmpty()) {
@@ -179,16 +181,6 @@ fun DashboardScreen(innerPadding: PaddingValues) {
                             modifier = Modifier.fillMaxWidth(),
                         )
                     }
-                }
-            }
-
-            if (isRefreshing) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    contentAlignment = Alignment.Center,
-                ) {
-                    CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
                 }
             }
 
