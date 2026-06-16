@@ -9,13 +9,16 @@ import com.nexus.core.storage.secure.TokenStore
 import com.nexus.feature.account.AccountRepository
 import com.nexus.feature.dashboard.DashboardRepository
 import com.nexus.game.kuro.KuroTokenParser
+import com.nexus.game.kuro.api.KuroCheckInApi
 import com.nexus.game.kuro.api.KuroRoleApi
+import com.nexus.game.kuro.model.KuroCheckInInfo
+import com.nexus.game.kuro.model.KuroEnvelopeDto
 import com.nexus.game.pgr.PgrRepository
 import com.nexus.game.wuwa.api.WuwaAkiBoxApi
 import com.nexus.game.wuwa.api.WuwaWidgetApi
 import com.nexus.game.wuwa.model.DashboardCardModel
 import com.nexus.game.wuwa.model.WuwaAccount
-import com.nexus.game.wuwa.model.WuwaRefreshDataEnvelopeDto
+import com.nexus.game.wuwa.model.WuwaEnvelopeDto
 import com.nexus.game.wuwa.model.WuwaRequestTokenEnvelopeDto
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonElement
@@ -27,11 +30,13 @@ class WuwaRepositoryImpl(
     private val roleApi: KuroRoleApi,
     private val widgetApi: WuwaWidgetApi,
     private val akiBoxApi: WuwaAkiBoxApi,
+    private val checkInApi: KuroCheckInApi,
     private val pgrRepository: PgrRepository,
     private val headerProvider: KuroHeaderProvider,
     private val accountStore: WuwaAccountStore,
     private val snapshotStore: WuwaSnapshotStore,
     private val tokenStore: TokenStore,
+    private val reqMonthProvider: ReqMonthProvider = ReqMonthProvider(),
 ) : WuwaRepository, AccountRepository, DashboardRepository {
     suspend fun getBoundAccounts(): List<WuwaAccount> = accountStore.getAccounts()
 
@@ -120,6 +125,94 @@ class WuwaRepositoryImpl(
             fetchDashboardCard(refreshedAccount, token)?.also { snapshotStore.save(refreshedAccount.id, it) }
         }
         return OperationResult.Success(cards)
+    }
+
+    override suspend fun getCheckInInfo(accountId: Long): OperationResult<KuroCheckInInfo> {
+        val account = accountStore.getAccount(accountId)
+            ?: return OperationResult.Failure(AppError.UnknownError("Account not found"))
+        val token = tokenStore.getBbsToken(account.id)
+            ?: return OperationResult.Failure(AppError.AuthError("Missing login token"))
+
+        val response = runCatching {
+            checkInApi.getCheckInInit(
+                headers = headerProvider.webHeaders(token),
+                gameId = account.gameId,
+                serverId = account.serverId,
+                roleId = account.roleId,
+                userId = account.userId,
+            )
+        }.getOrElse {
+            return OperationResult.Failure(AppError.UnknownError(it.message ?: "Check-in info request failed"))
+        }
+
+        if (!response.success) {
+            return OperationResult.Failure(response.toAppError(defaultMessage = "Check-in info request failed"))
+        }
+
+        val data = response.data
+            ?: return OperationResult.Failure(AppError.ApiContractError("Check-in info response missing data"))
+
+        return OperationResult.Success(
+            KuroCheckInInfo(
+                accountId = account.id,
+                roleName = account.roleName,
+                serverName = account.serverName,
+                isSignedIn = data.isSigIn,
+                signedDays = data.sigInNum,
+                serverTime = data.nowServerTimes,
+                eventStartTime = data.eventStartTimes,
+                eventEndTime = data.eventEndTimes,
+                missedDays = 0,
+                replenishCount = 0,
+                rewards = emptyList(),
+            ),
+        )
+    }
+
+    override suspend fun checkIn(accountId: Long): OperationResult<Unit> {
+        val account = accountStore.getAccount(accountId)
+            ?: return OperationResult.Failure(AppError.UnknownError("Account not found"))
+        val token = tokenStore.getBbsToken(account.id)
+            ?: return OperationResult.Failure(AppError.AuthError("Missing login token"))
+
+        val initResponse = runCatching {
+            checkInApi.getCheckInInit(
+                headers = headerProvider.webHeaders(token),
+                gameId = account.gameId,
+                serverId = account.serverId,
+                roleId = account.roleId,
+                userId = account.userId,
+            )
+        }.getOrElse {
+            return OperationResult.Failure(AppError.UnknownError(it.message ?: "Check-in init request failed"))
+        }
+
+        if (!initResponse.success) {
+            return OperationResult.Failure(initResponse.toAppError(defaultMessage = "Check-in init request failed"))
+        }
+
+        if (initResponse.data?.isSigIn == true) {
+            return OperationResult.Success(Unit)
+        }
+
+        val response = runCatching {
+            checkInApi.checkIn(
+                headers = headerProvider.webHeaders(token),
+                gameId = account.gameId.toString(),
+                serverId = account.serverId,
+                roleId = account.roleId,
+                userId = account.userId,
+                reqMonth = reqMonthProvider.currentMonth(),
+            )
+        }.getOrElse {
+            return OperationResult.Failure(AppError.UnknownError(it.message ?: "Check-in request failed"))
+        }
+
+        if (!response.success) {
+            return OperationResult.Failure(response.toAppError(defaultMessage = "Check-in request failed"))
+        }
+
+        return OperationResult.Success(Unit)
     }
 
     override suspend fun bindWuwaAccount(token: String, nickname: String?): OperationResult<WuwaAccount> {
@@ -342,7 +435,11 @@ class WuwaRepositoryImpl(
         return mapEnvelopeError(code = code, message = msg, defaultMessage = "获取 b-at 失败")
     }
 
-    private fun WuwaRefreshDataEnvelopeDto.toAppError(defaultMessage: String): AppError {
+    private fun KuroEnvelopeDto<*>.toAppError(defaultMessage: String): AppError {
+        return mapEnvelopeError(code = code, message = msg, defaultMessage = defaultMessage)
+    }
+
+    private fun WuwaEnvelopeDto<*>.toAppError(defaultMessage: String): AppError {
         return mapEnvelopeError(code = code, message = msg, defaultMessage = defaultMessage)
     }
 

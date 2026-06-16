@@ -9,57 +9,74 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.CalendarMonth
 import androidx.compose.material.icons.outlined.CheckCircle
-import androidx.compose.material.icons.outlined.ErrorOutline
-import androidx.compose.material.icons.outlined.Key
+import androidx.compose.material.icons.outlined.Refresh
 import androidx.compose.material.icons.outlined.WarningAmber
-import androidx.compose.material.icons.outlined.Bolt
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.nexus.app.AppGraph
 import com.nexus.core.model.GameType
-import com.nexus.game.wuwa.model.DashboardCardModel
-import com.nexus.game.wuwa.model.WuwaAccount
+import com.nexus.ui.components.NexusAvatar
 import com.nexus.ui.components.NexusEmptyStateCard
 import com.nexus.ui.components.NexusPage
 import com.nexus.ui.components.NexusPanel
 import com.nexus.ui.components.NexusPrimaryButton
 import com.nexus.ui.components.NexusSecondaryButton
+import com.nexus.ui.components.NexusStatusChip
+import com.nexus.ui.components.NexusStatusTone
+import com.nexus.ui.theme.AccentPrimary
 import com.nexus.ui.theme.BackgroundWarm
-import com.nexus.ui.theme.ErrorBackground
+import com.nexus.ui.theme.BorderSubtle
 import com.nexus.ui.theme.ErrorForeground
+import com.nexus.ui.theme.SurfaceCard
 import com.nexus.ui.theme.TextMuted
 import com.nexus.ui.theme.TextPrimary
 import com.nexus.ui.theme.TextSecondary
-import com.nexus.ui.theme.WarningForeground
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 
 @Composable
 fun CheckInScreen(innerPadding: PaddingValues) {
     val repository = remember { AppGraph.repository }
-
-    var accounts by remember { mutableStateOf(emptyList<WuwaAccount>()) }
-    var cards by remember { mutableStateOf(emptyList<DashboardCardModel>()) }
-    var results by remember { mutableStateOf(emptyList<CheckInResultUi>()) }
+    val viewModel: CheckInViewModel = viewModel(
+        factory = remember(repository) {
+            object : ViewModelProvider.Factory {
+                @Suppress("UNCHECKED_CAST")
+                override fun <T : ViewModel> create(modelClass: Class<T>): T {
+                    return CheckInViewModel(repository) as T
+                }
+            }
+        },
+    )
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     LaunchedEffect(Unit) {
-        accounts = repository.getBoundAccounts().filterWuwaAccounts()
-        cards = repository.getCachedDashboardCards()
+        viewModel.loadCheckInStatus()
     }
 
     Column(
@@ -81,24 +98,27 @@ fun CheckInScreen(innerPadding: PaddingValues) {
                 contentAlignment = Alignment.Center,
             ) {
                 NexusPrimaryButton(
-                    label = "一键签到",
-                    icon = Icons.Outlined.Bolt,
-                    onClick = {
-                        results = buildCheckInResults(accounts, cards)
-                    },
+                    label = if (uiState.isLoading) "获取中" else "刷新状态",
+                    icon = Icons.Outlined.Refresh,
+                    enabled = !uiState.isLoading,
+                    onClick = viewModel::refresh,
                 )
             }
 
-            if (results.isEmpty()) {
-                NexusEmptyStateCard(
+            when {
+                uiState.isLoading && uiState.accounts.isEmpty() -> LoadingPanel()
+                uiState.accounts.isEmpty() -> NexusEmptyStateCard(
                     title = "暂无签到记录",
+                    description = "绑定鸣潮账号后会展示每个账号的签到状态",
                     icon = Icons.Outlined.CalendarMonth,
                     modifier = Modifier.fillMaxWidth(),
                 )
-            } else {
-                Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                    results.forEach { result ->
-                        CheckInResultCard(result = result)
+                else -> Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                    uiState.accounts.forEach { account ->
+                        CheckInAccountCard(
+                            account = account,
+                            onCheckIn = viewModel::checkIn,
+                        )
                     }
                 }
             }
@@ -107,123 +127,145 @@ fun CheckInScreen(innerPadding: PaddingValues) {
 }
 
 @Composable
-private fun CheckInResultCard(result: CheckInResultUi) {
-    val containerColor = when (result.tone) {
-        CheckInTone.Success -> MaterialTheme.colorScheme.surface
-        CheckInTone.Warning -> MaterialTheme.colorScheme.surface
-        CheckInTone.Error -> ErrorBackground
+private fun LoadingPanel() {
+    NexusPanel(modifier = Modifier.fillMaxWidth()) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            CircularProgressIndicator(
+                modifier = Modifier.size(20.dp),
+                color = AccentPrimary,
+                strokeWidth = 2.dp,
+            )
+            Text(
+                text = "正在获取签到状态",
+                style = MaterialTheme.typography.bodyLarge,
+                color = TextSecondary,
+            )
+        }
     }
-    val contentColor = when (result.tone) {
-        CheckInTone.Success -> MaterialTheme.colorScheme.tertiary
-        CheckInTone.Warning -> WarningForeground
-        CheckInTone.Error -> ErrorForeground
-    }
+}
 
+@Composable
+private fun CheckInAccountCard(
+    account: CheckInAccountUiState,
+    onCheckIn: (Long) -> Unit,
+) {
     NexusPanel(
         modifier = Modifier.fillMaxWidth(),
-        containerColor = containerColor,
-        borderColor = if (result.tone == CheckInTone.Error) ErrorForeground.copy(alpha = 0.15f) else MaterialTheme.colorScheme.outline,
+        containerColor = SurfaceCard,
+        borderColor = BorderSubtle,
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Icon(
-                imageVector = result.icon,
-                contentDescription = null,
-                tint = contentColor,
-            )
-            Text(
-                text = result.title,
-                style = MaterialTheme.typography.titleMedium,
-                color = TextPrimary,
+            CheckInAvatar(account = account)
+            Column(
                 modifier = Modifier.weight(1f),
-            )
-            Text(
-                text = result.status,
-                style = MaterialTheme.typography.labelSmall,
-                color = contentColor,
-            )
-        }
-        Text(
-            text = result.message,
-            style = MaterialTheme.typography.bodyLarge,
-            color = TextSecondary,
-        )
-        Text(
-            text = result.caption,
-            style = MaterialTheme.typography.bodyMedium,
-            color = TextMuted,
-        )
-        if (result.actionLabel != null) {
-            NexusSecondaryButton(
-                label = result.actionLabel,
-                icon = Icons.Outlined.Key,
-                onClick = {},
-            )
-        }
-    }
-}
-
-private fun buildCheckInResults(
-    accounts: List<WuwaAccount>,
-    cards: List<DashboardCardModel>,
-): List<CheckInResultUi> {
-    if (accounts.isEmpty()) return emptyList()
-
-    val cardByIdentity = cards.associateBy { "${it.title}:${it.subtitle}" }
-
-    return accounts.take(3).mapIndexed { index, account ->
-        val card = cardByIdentity["${account.roleName}:${account.serverName}"]
-        when {
-            card == null -> CheckInResultUi(
-                title = "${account.nickname ?: account.roleName} - ${account.serverName}",
-                status = "Token失效",
-                message = "请重新绑定账号以继续签到",
-                caption = "本地暂无可用快照",
-                tone = CheckInTone.Error,
-                icon = Icons.Outlined.ErrorOutline,
-                actionLabel = "重新绑定",
-            )
-
-            card.signInStatus.contains("已") -> CheckInResultUi(
-                title = "${account.nickname ?: account.roleName} - ${account.serverName}",
-                status = if (index == 0) "已签到" else "今日已签到",
-                message = if (index == 0) "同步快照：${card.energyText}" else "无新奖励",
-                caption = "最后同步：${card.updatedAtText}",
-                tone = if (index == 0) CheckInTone.Success else CheckInTone.Warning,
-                icon = if (index == 0) Icons.Outlined.CheckCircle else Icons.Outlined.WarningAmber,
-            )
-
-            else -> CheckInResultUi(
-                title = "${account.nickname ?: account.roleName} - ${account.serverName}",
-                status = "待执行",
-                message = "已生成签到任务，等待后端接口接入后执行。",
-                caption = "最近快照：${card.updatedAtText}",
-                tone = CheckInTone.Warning,
-                icon = Icons.Outlined.WarningAmber,
+                verticalArrangement = Arrangement.spacedBy(6.dp),
+            ) {
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Text(
+                        text = account.roleName,
+                        style = MaterialTheme.typography.titleMedium,
+                        color = TextPrimary,
+                        fontWeight = FontWeight.Bold,
+                    )
+                    NexusStatusChip(
+                        text = account.statusText,
+                        tone = account.statusTone,
+                    )
+                }
+                Text(
+                    text = "${account.gameDisplayName()} · ${account.uidText}",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = TextMuted,
+                )
+                val detailText = account.errorMessage
+                    ?: "本期已签到 ${account.signedDays} 天"
+                Text(
+                    text = detailText,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = if (account.errorMessage == null) TextSecondary else ErrorForeground,
+                )
+            }
+            CheckInStateButton(
+                account = account,
+                onCheckIn = onCheckIn,
             )
         }
     }
 }
 
-private data class CheckInResultUi(
-    val title: String,
-    val status: String,
-    val message: String,
-    val caption: String,
-    val tone: CheckInTone,
-    val icon: ImageVector,
-    val actionLabel: String? = null,
-)
-
-private fun List<WuwaAccount>.filterWuwaAccounts(): List<WuwaAccount> {
-    return filter { it.gameId == GameType.WUWA.gameId }
+@Composable
+private fun CheckInAvatar(account: CheckInAccountUiState) {
+    if (account.headPhotoUrl.isNullOrBlank()) {
+        NexusAvatar(label = account.roleName)
+        return
+    }
+    val context = LocalContext.current
+    AsyncImage(
+        model = ImageRequest.Builder(context)
+            .data(account.headPhotoUrl)
+            .addHeader("User-Agent", "Kuro/2.11.0 KuroGameBox/2.11.0")
+            .addHeader("Referer", "https://web-static.kurobbs.com/")
+            .crossfade(true)
+            .build(),
+        contentDescription = null,
+        modifier = Modifier
+            .size(40.dp)
+            .clip(CircleShape),
+        contentScale = ContentScale.Crop,
+    )
 }
 
-private enum class CheckInTone {
-    Success,
-    Warning,
-    Error,
+@Composable
+private fun CheckInStateButton(
+    account: CheckInAccountUiState,
+    onCheckIn: (Long) -> Unit,
+) {
+    if (account.errorMessage != null) {
+        Icon(
+            imageVector = Icons.Outlined.WarningAmber,
+            contentDescription = null,
+            tint = ErrorForeground,
+            modifier = Modifier.size(22.dp),
+        )
+        return
+    }
+
+    val label = if (account.isSignedIn) "已签到" else "签到"
+    NexusSecondaryButton(
+        label = label,
+        icon = Icons.Outlined.CheckCircle,
+        enabled = !account.isSignedIn && !account.isSigningIn,
+        onClick = { onCheckIn(account.accountId) },
+        containerColor = AccentPrimary,
+        contentColor = Color.White,
+        disabledContainerColor = Color(0xFFD6CEC6),
+        disabledContentColor = Color(0xFF8A827B),
+    )
+}
+
+private val CheckInAccountUiState.statusTone: NexusStatusTone
+    get() = when {
+        errorMessage != null -> NexusStatusTone.Error
+        isSigningIn -> NexusStatusTone.Warning
+        isSignedIn -> NexusStatusTone.Success
+        else -> NexusStatusTone.Warning
+    }
+
+private fun CheckInAccountUiState.gameDisplayName(): String {
+    return when (gameId) {
+        GameType.WUWA.gameId -> "鸣潮"
+        GameType.PGR.gameId -> "战双帕弥什"
+        else -> "未知游戏"
+    }
 }

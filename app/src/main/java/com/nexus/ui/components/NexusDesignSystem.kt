@@ -143,6 +143,10 @@ fun NexusSecondaryButton(
     modifier: Modifier = Modifier,
     icon: ImageVector? = null,
     enabled: Boolean = true,
+    containerColor: Color = SurfaceInput,
+    contentColor: Color = TextPrimary,
+    disabledContainerColor: Color = containerColor.copy(alpha = 0.55f),
+    disabledContentColor: Color = contentColor.copy(alpha = 0.7f),
 ) {
     NexusActionButton(
         label = label,
@@ -150,8 +154,10 @@ fun NexusSecondaryButton(
         modifier = modifier,
         icon = icon,
         enabled = enabled,
-        containerColor = SurfaceInput,
-        contentColor = TextPrimary,
+        containerColor = containerColor,
+        contentColor = contentColor,
+        disabledContainerColor = disabledContainerColor,
+        disabledContentColor = disabledContentColor,
     )
 }
 
@@ -183,6 +189,8 @@ private fun NexusActionButton(
     enabled: Boolean,
     containerColor: Color,
     contentColor: Color,
+    disabledContainerColor: Color = containerColor.copy(alpha = 0.55f),
+    disabledContentColor: Color = contentColor.copy(alpha = 0.7f),
 ) {
     Button(
         onClick = onClick,
@@ -192,8 +200,8 @@ private fun NexusActionButton(
         colors = ButtonDefaults.buttonColors(
             containerColor = containerColor,
             contentColor = contentColor,
-            disabledContainerColor = containerColor.copy(alpha = 0.55f),
-            disabledContentColor = contentColor.copy(alpha = 0.7f),
+            disabledContainerColor = disabledContainerColor,
+            disabledContentColor = disabledContentColor,
         ),
         contentPadding = ButtonDefaults.ButtonWithIconContentPadding,
     ) {

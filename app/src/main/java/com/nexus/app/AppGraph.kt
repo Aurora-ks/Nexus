@@ -46,6 +46,7 @@ object AppGraph {
             roleApi = NetworkModule.kuroRoleApi,
             widgetApi = NetworkModule.wuwaWidgetApi,
             akiBoxApi = NetworkModule.wuwaAkiBoxApi,
+            checkInApi = NetworkModule.kuroCheckInApi,
             pgrRepository = PgrRepository(
                 roleApi = NetworkModule.kuroRoleApi,
                 roleBoxApi = NetworkModule.pgrRoleBoxApi,

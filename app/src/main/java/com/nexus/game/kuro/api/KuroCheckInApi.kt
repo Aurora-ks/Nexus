@@ -1,13 +1,13 @@
-package com.nexus.game.wuwa.api
+package com.nexus.game.kuro.api
 
-import com.nexus.game.wuwa.model.WuwaCheckInEnvelopeDto
-import com.nexus.game.wuwa.model.WuwaCheckInInitEnvelopeDto
+import com.nexus.game.kuro.model.KuroCheckInEnvelopeDto
+import com.nexus.game.kuro.model.KuroCheckInInitEnvelopeDto
 import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
 import retrofit2.http.HeaderMap
 import retrofit2.http.POST
 
-interface WuwaCheckInApi {
+interface KuroCheckInApi {
     @FormUrlEncoded
     @POST("encourage/signIn/initSignInV2")
     suspend fun getCheckInInit(
@@ -16,16 +16,16 @@ interface WuwaCheckInApi {
         @Field("serverId") serverId: String,
         @Field("roleId") roleId: String,
         @Field("userId") userId: String,
-    ): WuwaCheckInInitEnvelopeDto
+    ): KuroCheckInInitEnvelopeDto
 
     @FormUrlEncoded
     @POST("encourage/signIn/v2")
     suspend fun checkIn(
         @HeaderMap headers: Map<String, String>,
-        @Field("gameId") gameId: Int,
+        @Field("gameId") gameId: String,
         @Field("serverId") serverId: String,
         @Field("roleId") roleId: String,
         @Field("userId") userId: String,
         @Field("reqMonth") reqMonth: String,
-    ): WuwaCheckInEnvelopeDto
+    ): KuroCheckInEnvelopeDto
 }

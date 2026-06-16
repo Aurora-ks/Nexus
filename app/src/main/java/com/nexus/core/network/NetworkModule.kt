@@ -2,6 +2,7 @@ package com.nexus.core.network
 
 import com.nexus.app.BuildConfig
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
+import com.nexus.game.kuro.api.KuroCheckInApi
 import com.nexus.game.kuro.api.KuroRoleApi
 import com.nexus.game.pgr.api.PgrRoleBoxApi
 import com.nexus.game.wuwa.api.WuwaAkiBoxApi
@@ -35,6 +36,7 @@ object NetworkModule {
         .build()
 
     val kuroRoleApi: KuroRoleApi = retrofit.create(KuroRoleApi::class.java)
+    val kuroCheckInApi: KuroCheckInApi = retrofit.create(KuroCheckInApi::class.java)
     val wuwaWidgetApi: WuwaWidgetApi = retrofit.create(WuwaWidgetApi::class.java)
     val wuwaAkiBoxApi: WuwaAkiBoxApi = retrofit.create(WuwaAkiBoxApi::class.java)
     val pgrRoleBoxApi: PgrRoleBoxApi = retrofit.create(PgrRoleBoxApi::class.java)
