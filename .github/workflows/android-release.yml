@@ -1,0 +1,95 @@
+name: Android Release
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+    inputs:
+      release_name:
+        description: "Release name, for example v0.1.0-manual"
+        required: false
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    name: Build signed release APK
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+          cache: gradle
+
+      - name: Validate signing secrets
+        env:
+          ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+        run: |
+          test -n "$ANDROID_KEYSTORE_BASE64"
+          test -n "$ANDROID_KEYSTORE_PASSWORD"
+          test -n "$ANDROID_KEY_ALIAS"
+          test -n "$ANDROID_KEY_PASSWORD"
+
+      - name: Build signed release APK
+        env:
+          ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          ANDROID_KEYSTORE_PATH: ${{ github.workspace }}/release.jks
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+          RELEASE_NAME_INPUT: ${{ inputs.release_name }}
+        run: |
+          set -euo pipefail
+
+          if [ "${GITHUB_EVENT_NAME}" = "workflow_dispatch" ]; then
+            RELEASE_NAME="$RELEASE_NAME_INPUT"
+            if [ -z "$RELEASE_NAME" ]; then
+              RELEASE_NAME="manual-${GITHUB_RUN_NUMBER}"
+            fi
+          else
+            RELEASE_NAME="${GITHUB_REF_NAME}"
+          fi
+
+          echo "$ANDROID_KEYSTORE_BASE64" | base64 --decode > "$ANDROID_KEYSTORE_PATH"
+          mkdir -p release
+
+          chmod +x ./gradlew
+          ./gradlew :app:assembleRelease --no-daemon
+
+          APK_PATH="$(find app/build/outputs/apk/release -name "*-release.apk" -print -quit)"
+          ASSET_NAME="$(printf "%s" "$RELEASE_NAME" | tr -c 'A-Za-z0-9._-' '-')"
+          SIGNED_APK="release/Nexus-${ASSET_NAME}.apk"
+          cp "$APK_PATH" "$SIGNED_APK"
+
+          echo "SIGNED_APK=$SIGNED_APK" >> "$GITHUB_ENV"
+          echo "RELEASE_NAME=$RELEASE_NAME" >> "$GITHUB_ENV"
+
+      - name: Upload workflow artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Nexus-release-apk
+          path: ${{ env.SIGNED_APK }}
+
+      - name: Publish GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if gh release view "$RELEASE_NAME" >/dev/null 2>&1; then
+            gh release upload "$RELEASE_NAME" "$SIGNED_APK" --clobber
+          else
+            gh release create "$RELEASE_NAME" "$SIGNED_APK" \
+              --title "Nexus $RELEASE_NAME" \
+              --notes "Android release build from ${GITHUB_SHA}."
+          fi

@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
@@ -6,9 +8,46 @@ plugins {
     id("com.google.devtools.ksp")
 }
 
+val signingPropertiesFile = rootProject.file("signing.properties")
+val signingProperties =
+    Properties().apply {
+        if (signingPropertiesFile.isFile) {
+            signingPropertiesFile.inputStream().use(::load)
+        }
+    }
+
+fun signingValue(
+    environmentName: String,
+    propertyName: String,
+): String? = System.getenv(environmentName)?.takeIf { it.isNotBlank() }
+    ?: signingProperties.getProperty(propertyName)?.takeIf { it.isNotBlank() }
+
 android {
     namespace = "com.nexus.app"
     compileSdk = 35
+
+    val releaseKeystorePath = signingValue("ANDROID_KEYSTORE_PATH", "storeFile")
+    val releaseKeystorePassword = signingValue("ANDROID_KEYSTORE_PASSWORD", "storePassword")
+    val releaseKeyAlias = signingValue("ANDROID_KEY_ALIAS", "keyAlias")
+    val releaseKeyPassword = signingValue("ANDROID_KEY_PASSWORD", "keyPassword")
+    val releaseKeystoreFile = releaseKeystorePath?.let { rootProject.file(it) }
+    val hasReleaseSigningInput =
+        !releaseKeystorePath.isNullOrBlank() ||
+            !releaseKeystorePassword.isNullOrBlank() ||
+            !releaseKeyAlias.isNullOrBlank() ||
+            !releaseKeyPassword.isNullOrBlank()
+    val hasReleaseSigningConfig =
+        releaseKeystoreFile?.isFile == true &&
+            !releaseKeystorePassword.isNullOrBlank() &&
+            !releaseKeyAlias.isNullOrBlank() &&
+            !releaseKeyPassword.isNullOrBlank()
+
+    if (hasReleaseSigningInput && !hasReleaseSigningConfig) {
+        error(
+            "Release signing config is incomplete. Check signing.properties or " +
+                "ANDROID_KEYSTORE_PATH/ANDROID_KEYSTORE_PASSWORD/ANDROID_KEY_ALIAS/ANDROID_KEY_PASSWORD.",
+        )
+    }
 
     defaultConfig {
         applicationId = "com.nexus.app"
@@ -21,8 +60,22 @@ android {
         vectorDrawables.useSupportLibrary = true
     }
 
+    signingConfigs {
+        if (hasReleaseSigningConfig) {
+            create("release") {
+                storeFile = releaseKeystoreFile
+                storePassword = releaseKeystorePassword
+                keyAlias = releaseKeyAlias
+                keyPassword = releaseKeyPassword
+            }
+        }
+    }
+
     buildTypes {
         release {
+            if (hasReleaseSigningConfig) {
+                signingConfig = signingConfigs.getByName("release")
+            }
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),

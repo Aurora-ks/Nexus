@@ -17,3 +17,9 @@ local.properties
 
 # Kotlin 会话缓存
 .kotlin/
+
+# Android release signing
+signing.properties
+release.jks
+*.jks
+*.keystore
