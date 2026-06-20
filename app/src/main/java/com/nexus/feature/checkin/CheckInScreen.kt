@@ -2,7 +2,6 @@ package com.nexus.feature.checkin
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -17,12 +16,13 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.CalendarMonth
 import androidx.compose.material.icons.outlined.CheckCircle
-import androidx.compose.material.icons.outlined.Refresh
 import androidx.compose.material.icons.outlined.WarningAmber
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -60,6 +60,7 @@ import com.nexus.ui.theme.TextSecondary
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CheckInScreen(innerPadding: PaddingValues) {
     val repository = remember { AppGraph.repository }
@@ -79,29 +80,35 @@ fun CheckInScreen(innerPadding: PaddingValues) {
         viewModel.loadCheckInStatus()
     }
 
-    Column(
+    PullToRefreshBox(
+        isRefreshing = uiState.isLoading,
+        onRefresh = viewModel::refresh,
         modifier = Modifier
             .fillMaxSize()
             .background(BackgroundWarm)
             .statusBarsPadding()
-            .padding(innerPadding)
-            .verticalScroll(rememberScrollState()),
+            .padding(innerPadding),
     ) {
-        NexusPage {
-            Text(
-                text = "签到中心",
-                style = MaterialTheme.typography.headlineLarge,
-                color = TextPrimary,
-            )
-            Box(
+        NexusPage(
+            modifier = Modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState()),
+        ) {
+            Row(
                 modifier = Modifier.fillMaxWidth(),
-                contentAlignment = Alignment.Center,
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically,
             ) {
+                Text(
+                    text = "签到中心",
+                    style = MaterialTheme.typography.headlineLarge,
+                    color = TextPrimary,
+                )
                 NexusPrimaryButton(
-                    label = if (uiState.isLoading) "获取中" else "刷新状态",
-                    icon = Icons.Outlined.Refresh,
-                    enabled = !uiState.isLoading,
-                    onClick = viewModel::refresh,
+                    label = if (uiState.isBatchSigningIn) "签到中" else "一键签到",
+                    icon = Icons.Outlined.CheckCircle,
+                    enabled = uiState.canCheckInAll,
+                    onClick = viewModel::checkInAll,
                 )
             }
 

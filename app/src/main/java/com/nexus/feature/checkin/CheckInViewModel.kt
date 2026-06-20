@@ -6,6 +6,7 @@ import com.nexus.core.model.AppError
 import com.nexus.core.model.OperationResult
 import com.nexus.game.wuwa.WuwaRepositoryImpl
 import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -132,6 +133,68 @@ class CheckInViewModel(
         }
     }
 
+    fun checkInAll() {
+        val accountIds = _uiState.value.accounts
+            .filter { !it.isSignedIn && !it.isSigningIn && it.errorMessage == null }
+            .map { it.accountId }
+        if (accountIds.isEmpty() || _uiState.value.isBatchSigningIn) return
+
+        viewModelScope.launch {
+            _uiState.update { state ->
+                state.copy(
+                    isBatchSigningIn = true,
+                    accounts = state.accounts.map { item ->
+                        if (item.accountId in accountIds) {
+                            item.copy(isSigningIn = true, errorMessage = null)
+                        } else {
+                            item
+                        }
+                    },
+                )
+            }
+
+            val results = accountIds.map { accountId ->
+                async {
+                    accountId to repository.checkIn(accountId)
+                }
+            }.awaitAll()
+
+            val failedMessages = results.mapNotNull { (accountId, result) ->
+                when (result) {
+                    is OperationResult.Success -> null
+                    is OperationResult.Failure -> accountId to result.error.toMessage()
+                }
+            }.toMap()
+
+            _uiState.update { state ->
+                state.copy(
+                    isBatchSigningIn = false,
+                    accounts = state.accounts.map { item ->
+                        if (item.accountId !in accountIds) {
+                            item
+                        } else {
+                            val message = failedMessages[item.accountId]
+                            item.copy(
+                                isSigningIn = false,
+                                isSignedIn = message == null,
+                                errorMessage = message,
+                            )
+                        }
+                    },
+                    lastResult = if (failedMessages.isEmpty()) {
+                        "一键签到完成"
+                    } else {
+                        "${accountIds.size - failedMessages.size} 个账号签到成功，${failedMessages.size} 个失败"
+                    },
+                )
+            }
+
+            if (failedMessages.isEmpty()) {
+                loadCheckInStatus()
+            }
+        }
+    }
+
     private fun AppError.toMessage(): String {
         return when (this) {
             is AppError.AuthError -> message
@@ -144,11 +207,17 @@ class CheckInViewModel(
 
 data class CheckInUiState(
     val isLoading: Boolean = false,
+    val isBatchSigningIn: Boolean = false,
     val accounts: List<CheckInAccountUiState> = emptyList(),
     val errorMessage: String? = null,
     val progressText: String = "0 / 0",
     val lastResult: String = "暂无执行记录",
-)
+) {
+    val canCheckInAll: Boolean
+        get() = !isLoading &&
+                !isBatchSigningIn &&
+                accounts.any { !it.isSignedIn && !it.isSigningIn && it.errorMessage == null }
+}
 
 data class CheckInAccountUiState(
     val accountId: Long,
