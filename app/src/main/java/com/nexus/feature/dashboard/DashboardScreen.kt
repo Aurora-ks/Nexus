@@ -32,7 +32,6 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -49,9 +48,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleEventObserver
-import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.nexus.app.AppGraph
 import com.nexus.core.model.GameType
 import com.nexus.core.model.OperationResult
@@ -76,11 +72,13 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DashboardScreen(innerPadding: PaddingValues) {
+fun DashboardScreen(
+    innerPadding: PaddingValues,
+    refreshVersion: Int,
+) {
     val repository = remember { AppGraph.repository }
     val syncUseCase = remember { SyncWuwaAccountsUseCase(repository) }
     val scope = rememberCoroutineScope()
-    val lifecycleOwner = LocalLifecycleOwner.current
 
     var accounts by remember { mutableStateOf(emptyList<WuwaAccount>()) }
     var cards by remember { mutableStateOf(emptyList<DashboardCardModel>()) }
@@ -95,14 +93,10 @@ fun DashboardScreen(innerPadding: PaddingValues) {
         cards = repository.getCachedDashboardCards()
     }
 
-    LaunchedEffect(Unit) {
-        reloadLocalState(refreshProfiles = true)
-    }
-
-    fun refreshDashboard() {
+    suspend fun syncDashboard() {
         if (isRefreshing) return
-        scope.launch {
-            isRefreshing = true
+        isRefreshing = true
+        try {
             when (val result = syncUseCase()) {
                 is OperationResult.Success -> {
                     cards = result.value
@@ -112,22 +106,19 @@ fun DashboardScreen(innerPadding: PaddingValues) {
                     reloadLocalState()
                 }
             }
+        } finally {
             isRefreshing = false
         }
     }
 
-    DisposableEffect(lifecycleOwner) {
-        val observer = LifecycleEventObserver { _, event ->
-            if (event == Lifecycle.Event.ON_RESUME) {
-                scope.launch {
-                    reloadLocalState(refreshProfiles = true)
-                }
-            }
+    fun refreshDashboard() {
+        scope.launch {
+            syncDashboard()
         }
-        lifecycleOwner.lifecycle.addObserver(observer)
-        onDispose {
-            lifecycleOwner.lifecycle.removeObserver(observer)
-        }
+    }
+
+    LaunchedEffect(refreshVersion) {
+        reloadLocalState()
     }
 
     val cardByIdentity = remember(cards) { cards.associateBy { "${it.title}:${it.subtitle}" } }

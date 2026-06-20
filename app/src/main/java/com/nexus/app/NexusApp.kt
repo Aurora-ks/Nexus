@@ -2,7 +2,11 @@ package com.nexus.app
 
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.AccountCircle
@@ -26,11 +30,21 @@ import com.nexus.ui.components.NexusBottomBarItem
 @Composable
 fun NexusApp() {
     val navController = rememberNavController()
+    val repository = remember { AppGraph.repository }
+    var startupRefreshVersion by remember { mutableIntStateOf(0) }
     val destinations = listOf(
         AppDestination("dashboard", "概览", Icons.Outlined.Home),
         AppDestination("checkin", "签到", Icons.Outlined.CheckCircle),
         AppDestination("accounts", "账号", Icons.Outlined.AccountCircle),
     )
+
+    LaunchedEffect(repository) {
+        runCatching {
+            repository.sync()
+        }.also {
+            startupRefreshVersion += 1
+        }
+    }
 
     Scaffold(
         bottomBar = {
@@ -69,7 +83,7 @@ fun NexusApp() {
             popEnterTransition = { EnterTransition.None },
             popExitTransition = { ExitTransition.None },
         ) {
-            composable("dashboard") { DashboardScreen(innerPadding) }
+            composable("dashboard") { DashboardScreen(innerPadding, refreshVersion = startupRefreshVersion) }
             composable("checkin") { CheckInScreen(innerPadding) }
             composable("accounts") { AccountScreen(innerPadding) }
         }
