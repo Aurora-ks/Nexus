@@ -24,9 +24,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -35,11 +33,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.nexus.app.AppGraph
 import com.nexus.core.model.GameType
 import com.nexus.ui.components.NexusAvatar
 import com.nexus.ui.components.NexusEmptyStateCard
@@ -62,23 +56,11 @@ import coil.request.ImageRequest
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CheckInScreen(innerPadding: PaddingValues) {
-    val repository = remember { AppGraph.repository }
-    val viewModel: CheckInViewModel = viewModel(
-        factory = remember(repository) {
-            object : ViewModelProvider.Factory {
-                @Suppress("UNCHECKED_CAST")
-                override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                    return CheckInViewModel(repository) as T
-                }
-            }
-        },
-    )
+fun CheckInScreen(
+    innerPadding: PaddingValues,
+    viewModel: CheckInViewModel,
+) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-
-    LaunchedEffect(Unit) {
-        viewModel.loadCheckInStatus()
-    }
 
     PullToRefreshBox(
         isRefreshing = uiState.isLoading,

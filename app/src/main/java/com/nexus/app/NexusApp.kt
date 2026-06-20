@@ -21,8 +21,12 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.nexus.feature.account.AccountScreen
 import com.nexus.feature.checkin.CheckInScreen
+import com.nexus.feature.checkin.CheckInViewModel
 import com.nexus.feature.dashboard.DashboardScreen
 import com.nexus.ui.components.NexusBottomBar
 import com.nexus.ui.components.NexusBottomBarItem
@@ -31,6 +35,16 @@ import com.nexus.ui.components.NexusBottomBarItem
 fun NexusApp() {
     val navController = rememberNavController()
     val repository = remember { AppGraph.repository }
+    val checkInViewModel: CheckInViewModel = viewModel(
+        factory = remember(repository) {
+            object : ViewModelProvider.Factory {
+                @Suppress("UNCHECKED_CAST")
+                override fun <T : ViewModel> create(modelClass: Class<T>): T {
+                    return CheckInViewModel(repository) as T
+                }
+            }
+        },
+    )
     var startupRefreshVersion by remember { mutableIntStateOf(0) }
     val destinations = listOf(
         AppDestination("dashboard", "概览", Icons.Outlined.Home),
@@ -44,6 +58,10 @@ fun NexusApp() {
         }.also {
             startupRefreshVersion += 1
         }
+    }
+
+    LaunchedEffect(checkInViewModel) {
+        checkInViewModel.loadCheckInStatus()
     }
 
     Scaffold(
@@ -84,7 +102,7 @@ fun NexusApp() {
             popExitTransition = { ExitTransition.None },
         ) {
             composable("dashboard") { DashboardScreen(innerPadding, refreshVersion = startupRefreshVersion) }
-            composable("checkin") { CheckInScreen(innerPadding) }
+            composable("checkin") { CheckInScreen(innerPadding, viewModel = checkInViewModel) }
             composable("accounts") { AccountScreen(innerPadding) }
         }
     }
